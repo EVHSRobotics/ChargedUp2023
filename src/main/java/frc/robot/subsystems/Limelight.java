@@ -1,0 +1,43 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Limelight extends SubsystemBase {
+
+  private NetworkTable table;
+  private NetworkTableEntry tx;
+
+  private NetworkTableEntry tv;
+
+  /** Creates a new Limelight. */
+  public Limelight() {
+    table = NetworkTableInstance.getDefault().getTable("limelight");
+    
+
+  }
+
+  @Override
+  public void periodic() {
+    tx = table.getEntry("tx");
+    tv = table.getEntry("tv");
+    SmartDashboard.putNumber("tx", tx.getDouble(0));
+    SmartDashboard.updateValues();
+  }
+
+  public double getX() {
+    double x = tx.getDouble(0.0);
+   
+    if (tv.getBoolean(false)) {
+      x = 0;
+    }
+    return x ;   
+  }
+
+  
+}
