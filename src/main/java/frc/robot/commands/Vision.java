@@ -4,14 +4,8 @@
 
 package frc.robot.commands;
 
-import javax.swing.text.View;
-
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,10 +13,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
-import frc.robot.subsystems.AprilScanner;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.VideoServer;
 
 public class Vision extends CommandBase {
 
@@ -82,14 +74,14 @@ public class Vision extends CommandBase {
 
     double x = limelight.getX();
     errorsum = 0;
-    error = -x;
+    error = x;
 
     double dt = Timer.getFPGATimestamp() - lastTimestamp;
     double errorrate = (error-lasterror)/dt;
     if(Math.abs(x) < 0.1){
-        errorsum += dt * -x;
+        errorsum += dt *  x;
     }
-    double output = MathUtil.clamp(error*0.00025 + errorrate *0+errorsum*0, -1, 1);
+    double output = MathUtil.clamp(error*0.00025 + errorrate *0+errorsum*0.0001, -1, 1);
 
     SmartDashboard.putNumber("Wrist", ( output));
     SmartDashboard.updateValues();

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.autos.*;
+import frc.robot.autos.SwerveCommand.PathCommandAction;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -107,7 +108,7 @@ public class RobotContainer {
     }
 
     public Command[] getTeleCommand() {
-        Command[] ret = {s_Swerve, fourBar, vision};
+        Command[] ret = {s_Swerve, vision};
         return ret;
     }
     /**
@@ -129,7 +130,7 @@ public class RobotContainer {
     // This is just an example event map. It would be better to have a constant, global event map
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
-    // eventMap.put("Auto Align Ramp", new SwerveCommand(PathCommandAction.AUTOALIGNRAMP, fourBar, vision, teleopSwerve));
+    eventMap.put("Auto Align Ramp", new SwerveCommand(PathCommandAction.AUTOALIGNRAMP, fourBar, vision, s_Swerve));
     // eventMap.put("Outake Cube 2", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Outake Cube 1", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Outake Cone 1", new SwerveCommand(PathCommandAction.OUTTAKECONE, fourBar, vision, teleopSwerve));

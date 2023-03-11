@@ -37,9 +37,12 @@ public class FourBar extends CommandBase {
   private boolean cubeBooleanFlag = false;
   private boolean deployIntake = false;
   private boolean deployShoot = false;
-  private GameObject gameObject = GameObject.UNKNOWN;
-
+  private GameObject gameObject = GameObject.CUBE;
+double outtakePower = 1;
   private double shootArmTime = -1;
+
+  private boolean lowIntake = true;
+  // true is Low
 
   /** Creates a new Claw. */
   public FourBar(Arm arm, Wrist wrist, Intake intake, XboxController controller, XboxController driveController) {
@@ -78,31 +81,20 @@ deployShoot = false;
         shootArmTime = System.currentTimeMillis();
       }
       arm.setTopPosition(tPositionScoring);
-arm.setBottomPosition(bPositionScoring);
-      if (System.currentTimeMillis() - shootArmTime >= 700) {
+      arm.setBottomPosition(bPositionScoring);
+      if (System.currentTimeMillis() - shootArmTime >= 5000) {
+        deployShoot = false;
+      }
+      else if (System.currentTimeMillis() - shootArmTime >= 3000) {
+        if (gameObject != GameObject.UNKNOWN) {
+          intake.runIntake(gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
+        }
+      }
+      else if (System.currentTimeMillis() - shootArmTime >= 700) {
         wrist.setWristPosition(wPositionScoring);
 
       }
-      else if (System.currentTimeMillis() - shootArmTime >= 2000) {
-        if (gameObject != GameObject.UNKNOWN) {
-          intake.runIntake(gameObject == GameObject.CUBE ? -0.6 : 0.6);
-        }
-      }
-      else if (System.currentTimeMillis() - shootArmTime >= 4000) {
-        deployShoot = false;
-      }
-      else {
-        deployShoot = true;
-
-      }
-      // if (!xboxController.getAButton()) {
-      //   if (gameObject != GameObject.UNKNOWN) {
- 
-      //   intake.runIntake(gameObject == GameObject.CUBE ? -0.6 : 0.6);
-      //   }
-      // }
-
-
+    
     }
     else {
       arm.setTopPosition(TopArmPosition.DOWN);
@@ -117,27 +109,35 @@ arm.setBottomPosition(bPositionScoring);
    
   }
   public void intakeAction(boolean action, GameObject gameObject) {
+    if (!lowIntake) {
+      if (action) {
+        arm.setTopPosition(TopArmPosition.STRAIGHT);
+        wrist.setWristPosition(WristPosition.SHOOTING);
+  deployIntake = true;
+      }
+      else {
+        arm.setTopPosition(TopArmPosition.DOWN);
+        wrist.setWristPosition(WristPosition.UP);
+        deployIntake = false;
+      }
+    }
+    else {
+
     if (action) {
-    // arm.setTopPosition(TopArmPosition.STRAIGHT);
     wrist.setWristPosition(WristPosition.STRAIGHT);
       SmartDashboard.putBoolean("itnae banne", intake.getIntakeBanner());
       SmartDashboard.updateValues();
-      // if (intake.getIntakeBanner()) {
 
-        // intake.runIntake(gameObject == GameObject.CUBE ? -0.7 : 0.7);
         deployIntake = true;
 
-  //     }
-  //     else {
-  // deployIntake = false;
-  //     }
     }
     else {
-    // arm.setTopPosition(TopArmPosition.DOWN);
     wrist.setWristPosition(WristPosition.UP);
     deployIntake = false;
     }
   }
+  }
+
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -153,7 +153,6 @@ arm.setBottomPosition(bPositionScoring);
 
     // }
 
-    arm.setArmSolenoids(true);
 
     if (xboxController.getLeftTriggerAxis() > 0) {
       // if (intake.getIntakeBanner()) {
@@ -202,57 +201,95 @@ arm.setBottomPosition(bPositionScoring);
   // }
 
   
-  
+  SmartDashboard.putNumber("Wrist", wrist.getWristMotorPosition());
+  SmartDashboard.putNumber("Top Arm", arm.getTopArmPosition());
+  SmartDashboard.putNumber("Bottom Arm", arm.getBottomArmPosition());
   SmartDashboard.putBoolean("deployIntake", deployIntake);
   SmartDashboard.putBoolean("deployShoot", deployShoot);
   SmartDashboard.updateValues();
 
-  if (!xboxController.getYButton() && !xboxController.getXButton() && !xboxController.getBButton()) {
-    wrist.setWristPosition(WristPosition.UP);
+  if (!xboxController.getYButton() && !xboxController.getXButton() && xboxController.getPOV() == -1 && !xboxController.getRightBumper() && !xboxController.getLeftBumper()) {
+    // wrist.setWristPosition(WristPosition.UP);
+  //  arm.setTopPosition(TopArmPosition.STRAIGHT);
   }
     if (xboxController.getYButtonPressed()) {
       gameObject = GameObject.CONE;
-
+      lowIntake = true;
       deployIntake = !deployIntake;
     }
 
  if (xboxController.getXButtonPressed()) {
   gameObject = GameObject.CUBE;
+  lowIntake = true;
 deployIntake = !deployIntake;
  }
 
+ if (xboxController.getLeftBumperPressed()) {
+  gameObject = GameObject.CUBE;
+  lowIntake = false;
+deployIntake = !deployIntake;
+ }
+ if (xboxController.getRightBumperPressed()) {
+  gameObject = GameObject.CONE;
+  lowIntake = false;
+deployIntake = !deployIntake;
+ }
     // if (xboxController.getBButtonPressed()) {
     //   deployShoot = !deployShoot;
     // }
   
 
     
+    SmartDashboard.putNumber("POV", xboxController.getPOV());
+    SmartDashboard.updateValues();
     if (xboxController.getPOV() == 0) {
       shootArmTime = -1;
+      outtakePower = 0.7;
 
       tPositionScoring = TopArmPosition.STRAIGHT;
-      bPositionScoring = BottomArmPosition.MIDDLE;
+      bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.SHOOTING;
-      deployShoot = !deployShoot;
+      // deployShoot = !deployShoot;
+    
+      if (deployShoot) {
+        deployShoot = false;
+      }
+      else {
+        deployShoot = true;
+      }
 
     }
     else if (xboxController.getPOV() == 90) {
       shootArmTime = -1;
 
-      tPositionScoring = TopArmPosition.STRAIGHT;
+      outtakePower = 0.7;
+      tPositionScoring = TopArmPosition.MIDDLE;
       bPositionScoring = BottomArmPosition.IN;
-      wPositionScoring = WristPosition.SHOOTING;
-      deployShoot = !deployShoot;
-
+      wPositionScoring = WristPosition.MIDDLE;
+      if (deployShoot) {
+        deployShoot = false;
+      }
+      else {
+        deployShoot = true;
+      }
     }
     else if (xboxController.getPOV() == 180) {
       shootArmTime = -1;
 
+      outtakePower = 0.4;
       tPositionScoring = TopArmPosition.DOWN;
       bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.UP;
-      deployShoot = !deployShoot;
-
+      if (deployShoot) {
+        deployShoot = false;
+      }
+      else {
+        deployShoot = true;
+      }
+    }
+    else if (xboxController.getPOV() == 270) {
+      
+      deployShoot = false;
     }
 
     if (!deployIntake) {

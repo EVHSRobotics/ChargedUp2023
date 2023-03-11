@@ -46,7 +46,7 @@ public class SwerveCommand extends CommandBase {
         // fourBar.activateCone();
         break;
       case AUTOALIGNRAMP:
-        // teleopSwerve.autoAlignRamp();
+        teleopSwerve.autoAlignRamp();
         break;
       case INTAKECUBE:
       // fourBar.activateCube();

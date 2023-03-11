@@ -107,8 +107,8 @@ public final class Constants {
         /* Drive Motor PID Values */
         public static final double driveKP = 0.1; // TODO: This must be tuned to specific robot
         public static final double driveKI = 0;
-        public static final double driveKD = 0.0;
-        public static final double driveKF = 1.5;
+        public static final double driveKD = 0;
+        public static final double driveKF = 0;
 
         /*
          * Drive Motor Characterization Values
@@ -120,7 +120,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 6380.0 / 60.0 * Math.PI; // TODO: This must be tuned to specific robot
+        public static final double maxSpeed = 3; // TODO: This must be tuned to specific robot
         /** Radians per Second */
         public static final double maxAngularVelocity = maxSpeed /
                 Math.hypot(trackWidth / 2.0, wheelBase / 2.0); // TODO: This must be tuned to specific robot
