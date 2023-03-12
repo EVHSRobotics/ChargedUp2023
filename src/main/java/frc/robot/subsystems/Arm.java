@@ -40,7 +40,7 @@ double tLastPos = 0;
 double bLastPos = 0;
   public enum TopArmPosition {
 
-    DOWN(0), MIDDLE(190000), STRAIGHT(380000);
+    DOWN(0), MIDDLE(190000), STRAIGHT(360000);
  
      private double tArmSensorPosition;
      public double getPos() {
@@ -123,7 +123,7 @@ tArmPosition = tPosition;
     if(Math.abs(tLastPos - getTopArmPosition()) < 10000){
         tErrorSum += dt * (tLastPos - getTopArmPosition());
     }
-    double output = MathUtil.clamp(tError*0.000004 + errorrate *0.000001+tErrorSum*0.0, -1, 1);
+    double output = MathUtil.clamp(tError*0.000004 + errorrate *0.0+tErrorSum*0.0, -1, 1);
 
     SmartDashboard.putNumber("Top PID Output", ( output));
     SmartDashboard.updateValues();
@@ -132,7 +132,8 @@ tArmPosition = tPosition;
     tLastPos = getTopArmPosition();
 
 
-    topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband(output, 0.01));
+    
+    topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband(output, 0.05));
 
     // topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
  

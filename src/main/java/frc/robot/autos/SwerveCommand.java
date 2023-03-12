@@ -10,6 +10,7 @@ import frc.robot.Constants.Intake;
 import frc.robot.commands.FourBar;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Vision;
+import frc.robot.subsystems.Intake.GameObject;
 
 public class SwerveCommand extends CommandBase {
 
@@ -56,7 +57,8 @@ public class SwerveCommand extends CommandBase {
 
         break;
       case OUTTAKECUBE:
-      // fourBar.activateCube();
+      fourBar.gameObject = GameObject.CUBE;
+      fourBar.shoot(true);
 
         break;
       default:

@@ -15,10 +15,11 @@ import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.VideoServer;
 
 public class Vision extends CommandBase {
 
-  // private VideoServer videoServer;
+  private VideoServer videoServer;
   // private AprilScanner aprilScanner;
   private Limelight limelight;
   private Swerve swerve;
@@ -30,10 +31,10 @@ public class Vision extends CommandBase {
   double lastTimestamp = 0;
 
   /** Creates a new Vision. */
-  public Vision(Swerve swerve, Limelight limelight, XboxController xboxController) {
+  public Vision(Swerve swerve, Limelight limelight, VideoServer videoServer, XboxController xboxController) {
     // Use addRequirements() here to declare subsystem dependencies.
     // VideoServer videoServer, AprilScanner aprilScanner,
-    // this.videoServer = videoServer;
+    this.videoServer = videoServer;
     // this.aprilScanner = aprilScanner;
     this.limelight = limelight;
     this.swerve = swerve;
@@ -49,6 +50,7 @@ public class Vision extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -83,15 +85,11 @@ public class Vision extends CommandBase {
     }
     double output = MathUtil.clamp(error*0.00025 + errorrate *0+errorsum*0.0001, -1, 1);
 
-    SmartDashboard.putNumber("Wrist", ( output));
+    SmartDashboard.putNumber("limelight", ( output));
     SmartDashboard.updateValues();
     lastTimestamp = Timer.getFPGATimestamp();
     lasterror = error;
     
-    SmartDashboard.putNumber("POWER", x * 0.00025 * (Constants.Swerve.maxSpeed) * 0.5);
-    SmartDashboard.putNumber("DISPLAACEMENT", x);
-    SmartDashboard.updateValues();
-
     swerve.drive(new Translation2d(
         0, MathUtil.applyDeadband(output, 0.001)).times(Constants.Swerve.maxSpeed).times(0.5),
         0, false, false);

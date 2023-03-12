@@ -28,8 +28,8 @@ public class TeleopSwerve extends CommandBase {
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, XboxController swerveController) {
         this.s_Swerve = s_Swerve;
         this.limiter = new SlewRateLimiter[3];
-        for (int i = 0; i < 3; i++) this.limiter[i] = new SlewRateLimiter(1.5);
-        this.limiter[2] = new SlewRateLimiter(3);
+        for (int i = 0; i < 3; i++) this.limiter[i] = new SlewRateLimiter(2.5);
+        this.limiter[2] = new SlewRateLimiter(2.5);
         this.swerveController = swerveController;
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
@@ -80,7 +80,10 @@ public class TeleopSwerve extends CommandBase {
 
             // s_Swerve.gyroVertical.reset();
         }
+        if (swerveController.getXButton()) {
+
        autoAlignRamp();
+        }
     }
     public double gyroPitch() {
         return (s_Swerve.gyro.getPitch());
@@ -92,7 +95,6 @@ public class TeleopSwerve extends CommandBase {
         return (s_Swerve.gyro.getAngle());
     }
     public void autoAlignRamp() {
-        if (swerveController.getXButton()) {
             SmartDashboard.putNumber("update PID ", (5.35-gyroPitch()) * 0.05 );
             SmartDashboard.updateValues();
                 s_Swerve.drive(
@@ -118,7 +120,7 @@ public class TeleopSwerve extends CommandBase {
             //         true
             //     );
             // }
-        }
+        
         
     
     }

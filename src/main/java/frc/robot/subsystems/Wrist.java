@@ -20,7 +20,7 @@ public class Wrist extends SubsystemBase {
 
   public enum WristPosition{
 
-   UP(0), MIDDLE(-160000), SHOOTING(-250100), STRAIGHT(-190100);
+   UP(0), MIDDLE(-160000), SHOOTING(-220100), STRAIGHT(-150100), STRAIGHTCUBE(-170100), STRAIGHTCONE(-160100);
 
     public double wristSensorPosition;
     private WristPosition(double wristSensorPosition) {
@@ -105,7 +105,7 @@ public class Wrist extends SubsystemBase {
       if(Math.abs(lastWristPos - getWristMotorPosition()) < 10000){
           errorsum += dt * (lastWristPos - getWristMotorPosition());
       }
-      double output = MathUtil.clamp(error*0.000008 + errorrate*0.000003 + errorsum*0.0, -1, 1);
+      double output = MathUtil.clamp(error*0.000008 + errorrate*0.0 + errorsum*0.0, -1, 1);
 
       wrist.set(ControlMode.PercentOutput, output);
  

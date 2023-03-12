@@ -52,7 +52,7 @@ public class RobotContainer {
     private final FourBar fourBar;
     /* Subsystem */
     private final Swerve swerve;
-    // private final VideoServer videoServer;
+    private final VideoServer videoServer;
     private final Limelight limelight;
     private final Arm arm;
     private final Wrist wrist;
@@ -70,7 +70,7 @@ public class RobotContainer {
         intake = new Intake();
 
         wrist = new Wrist();
-        // videoServer = new VideoServer();
+        videoServer = new VideoServer();
         // aprilScanner = new AprilScanner();
 
         driveController = new XboxController(Constants.Controller.driveControllerPort);
@@ -87,7 +87,7 @@ public class RobotContainer {
             );
 
         fourBar = new FourBar(arm, wrist, intake, operatorController, driveController);
-        vision = new Vision(swerve, limelight, driveController);
+        vision = new Vision(swerve, limelight, videoServer, driveController);
 
         // Configure the button bindings
         configureButtonBindings();
@@ -108,7 +108,7 @@ public class RobotContainer {
     }
 
     public Command[] getTeleCommand() {
-        Command[] ret = {s_Swerve, vision};
+        Command[] ret = {s_Swerve, fourBar, vision};
         return ret;
     }
     /**
@@ -125,7 +125,7 @@ public class RobotContainer {
 
         // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
     // for every path in the group
-    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Backup Ramp", new PathConstraints(1, 0.5));
+    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Basic Backup", new PathConstraints(1.5, 1));
     
     // This is just an example event map. It would be better to have a constant, global event map
     // in your code that will be used by all path following commands.
