@@ -9,8 +9,10 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -24,6 +26,9 @@ public class TeleopSwerve extends CommandBase {
     private XboxController swerveController;
     private SlewRateLimiter[] limiter;
 
+    private GenericEntry driveSpeedEntry;
+    private GenericEntry rotationalSpeedEntry;
+    private GenericEntry autoAlignRampEntry;
 
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, XboxController swerveController) {
         this.s_Swerve = s_Swerve;
@@ -37,6 +42,10 @@ public class TeleopSwerve extends CommandBase {
         this.robotCentricSup = robotCentricSup;
         addRequirements(s_Swerve);
 
+        driveSpeedEntry = Shuffleboard.getTab("DriverStation_2023").add("Drive Speed", 0.0).getEntry();
+        rotationalSpeedEntry = Shuffleboard.getTab("DriverStation_2023").add("Rotational Speed", 0.0).getEntry();
+        autoAlignRampEntry = Shuffleboard.getTab("DriverStation_2023").add("Balanced", true).getEntry();
+
     }
 
     @Override
@@ -48,15 +57,16 @@ public class TeleopSwerve extends CommandBase {
         SmartDashboard.putNumber("translationVal", translationVal);
         SmartDashboard.updateValues();
         /* Drive */
-        // if (!swerveController.getAButton()) {
-            s_Swerve.drive(
-                new Translation2d(-translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
+
+        s_Swerve.drive(
+                new Translation2d(-translationVal, -strafeVal).times(Constants.Swerve.maxSpeed), 
                 rotationVal * Constants.Swerve.maxAngularVelocity, 
                 false, 
                 true
             );
-        // }
         
+            driveSpeedEntry.setDouble(translationVal*Constants.Swerve.maxSpeed);
+            rotationalSpeedEntry.setDouble(rotationVal*Constants.Swerve.maxAngularVelocity);
 
         SmartDashboard.putNumber("AHRS Nav Angle X", s_Swerve.gyro.getQuaternionX());
         SmartDashboard.putNumber("AHRS Nav Angle Y", s_Swerve.gyro.getQuaternionY());
@@ -72,17 +82,17 @@ public class TeleopSwerve extends CommandBase {
         SmartDashboard.putNumber("AHRS Nav Angle heading", s_Swerve.gyro.getCompassHeading());
         SmartDashboard.updateValues();
         
-        if (swerveController.getBButton()) {
-            s_Swerve.gyro.reset();
-            s_Swerve.gyro.zeroYaw();
-
-            // s_Swerve.gyro.calibrate();
-
-            // s_Swerve.gyroVertical.reset();
-        }
         if (swerveController.getXButton()) {
 
-       autoAlignRamp();
+            autoAlignRamp();
+        }
+        
+        
+        if (MathUtil.applyDeadband(5.35-gyroPitch(), 0.05) == 0) {
+            autoAlignRampEntry.setBoolean(true);
+        }
+        else {
+            autoAlignRampEntry.setBoolean(false);
         }
     }
     public double gyroPitch() {
@@ -95,8 +105,8 @@ public class TeleopSwerve extends CommandBase {
         return (s_Swerve.gyro.getAngle());
     }
     public void autoAlignRamp() {
-            SmartDashboard.putNumber("update PID ", (5.35-gyroPitch()) * 0.05 );
-            SmartDashboard.updateValues();
+            
+
                 s_Swerve.drive(
                     new Translation2d((5.35-gyroPitch()) * 0.02, 0).times(Constants.Swerve.maxSpeed).times(0.5), 
                     0 * Constants.Swerve.maxAngularVelocity, 
@@ -104,24 +114,6 @@ public class TeleopSwerve extends CommandBase {
                     true
                 );
             
-            // if (gyroPitch() >= 11) {
-            //     s_Swerve.drive(
-            //         new Translation2d(0.2, 0).times(Constants.Swerve.maxSpeed).times(0.5), 
-            //         0 * Constants.Swerve.maxAngularVelocity, 
-            //         false, 
-            //         true
-            //     );
-            // }
-            // else if (gyroPitch() <= -11) {
-            //     s_Swerve.drive(
-            //         new Translation2d(-0.2, 0).times(Constants.Swerve.maxSpeed).times(0.5), 
-            //         0 * Constants.Swerve.maxAngularVelocity, 
-            //         false, 
-            //         true
-            //     );
-            // }
-        
-        
     
     }
 }

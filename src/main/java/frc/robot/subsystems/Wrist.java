@@ -20,7 +20,7 @@ public class Wrist extends SubsystemBase {
 
   public enum WristPosition{
 
-   UP(0), MIDDLE(-160000), SHOOTING(-220100), STRAIGHT(-150100), STRAIGHTCUBE(-170100), STRAIGHTCONE(-160100);
+   UP(0), MIDDLE(-160000), SHOOTING(-220100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-170100), STRAIGHTCONE(-160100);
 
     public double wristSensorPosition;
     private WristPosition(double wristSensorPosition) {
@@ -56,22 +56,9 @@ public class Wrist extends SubsystemBase {
     }
     public void moveWrist(double speed){
       
-      // if (Math.abs(speed) >= 0.05) {
         lastWristPos = getWristMotorPosition();
         wrist.set(ControlMode.PercentOutput, speed);
 
-      // }
-      // else {
-      //   double errorsum = 0;
-      //   if(Math.abs(lastWristPos - getWristMotorPosition()) < 500){
-      //     errorsum += Math.abs(lastWristPos - getWristMotorPosition());
-      //   }
-
-      
-      //   wrist.set(ControlMode.PercentOutput, ((lastWristPos - getWristMotorPosition()) * 0.00015) + errorsum*0.00001 + wrist.getSelectedSensorVelocity() * 0.00009);
-      //   SmartDashboard.putNumber("Wrist", ((lastWristPos - getWristMotorPosition()) * 0.00015));
-      //   SmartDashboard.updateValues();
-      // }
 
       
 
@@ -88,16 +75,18 @@ public class Wrist extends SubsystemBase {
         if(wrist.getSelectedSensorPosition() != ((wristStartAngle-wristangle)+wristAngleongnokizzy)*gearratio*2048){
           SmartDashboard.putNumber("Wrist Parallel", ((wristStartAngle-wristangle)+wristAngleongnokizzy)*gearratio*2048-wrist.getSelectedSensorPosition()*kp);
           SmartDashboard.updateValues();
-            // wrist.set(ControlMode.PercentOutput, );
         } 
 
+    }
+
+    public void resetWristEncoder() {
+      wrist.setSelectedSensorPosition(0);
     }
 
     public void setWristPosition(WristPosition wPosition) {
 
       
 
-      // errorsum = 0;
       error = wPosition.wristSensorPosition - wrist.getSelectedSensorPosition();
 
       double dt = Timer.getFPGATimestamp() - lastTimestamp;

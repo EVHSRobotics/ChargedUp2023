@@ -42,7 +42,6 @@ public class Intake extends SubsystemBase {
   }
   private TalonSRX intakeMotor;
 
-  private Compressor compressor;
   private DigitalInput bannerIntake;
   private boolean didSeeBanner;
 
@@ -59,7 +58,6 @@ public class Intake extends SubsystemBase {
     
     bannerIntake = new DigitalInput(Constants.Intake.banner);
     
-    compressor = new Compressor(Constants.Intake.PCM, PneumaticsModuleType.CTREPCM);
 
     // intakeColorSensor = new ColorSensorV3(Port.kOnboard);
     

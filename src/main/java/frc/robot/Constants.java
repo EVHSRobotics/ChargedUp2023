@@ -22,8 +22,6 @@ public final class Constants {
     public static final class Intake {
 
 
-        public static final int PCM = 0;
-
         // Banner
         public static final int banner = 1;
         public static int intakeMotor = 22;
@@ -43,6 +41,8 @@ public final class Constants {
         public static final PIDController B_PID_CONTROLLER = new PIDController(0, 0, 0);
         public static final int wristMotor = 23;
         public static final int intake = 22;
+
+        public static final int colorsDIO = 2;
 
     }
 

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -24,10 +25,7 @@ public class Arm extends SubsystemBase {
   private TalonFX bottomArm;
   public TalonFX topArm;
 
-
-
-public TopArmPosition tArmPosition = TopArmPosition.DOWN;
-public BottomArmPosition bArmPosition = BottomArmPosition.IN;
+  private Spark sparkLights;
 
 double bErrorSum = 0;
 double tErrorSum = 0;
@@ -38,9 +36,27 @@ double tLastError = 0;
 double lastTimestamp = 0;
 double tLastPos = 0;
 double bLastPos = 0;
+
+public enum SparkLEDColors {
+
+  RAINBOW(-0.99), SHOOT(-0.15), PURPLE(0.89), YELLOW(0.69);
+
+  private double ledColorValue;
+
+  public double getColor() {
+    return ledColorValue;
+  }
+
+  private SparkLEDColors(double ledColor) {
+    this.ledColorValue = ledColor;
+  }
+
+}
+
+
   public enum TopArmPosition {
 
-    DOWN(0), MIDDLE(190000), STRAIGHT(360000);
+    DOWN(0), MIDDLE(190000), STRAIGHT(395000);
  
      private double tArmSensorPosition;
      public double getPos() {
@@ -71,6 +87,10 @@ double bLastPos = 0;
     topArm.setNeutralMode(NeutralMode.Brake);
     bottomArm.setNeutralMode(NeutralMode.Brake);
 
+    sparkLights = new Spark(Constants.Arm.colorsDIO);
+
+    sparkLights.set(SparkLEDColors.RAINBOW.getColor());
+
     // bottomArm.configForwardSoftLimitThreshold(Constants.Arm.bottomForwardLimit);
     // bottomArm.configReverseSoftLimitThreshold(Constants.Arm.bottomReverseLimit);
     
@@ -86,6 +106,9 @@ double bLastPos = 0;
     
   }
 
+  public void setLED(SparkLEDColors ledColor) {
+    sparkLights.set(ledColor.getColor());
+  }
 
   public double getTopArmPosition() {
     return topArm.getSelectedSensorPosition();
@@ -111,7 +134,6 @@ double bLastPos = 0;
   }
 
   public void setTopPosition(TopArmPosition tPosition){
-tArmPosition = tPosition;
     SmartDashboard.putNumber("top pos PID", MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
     SmartDashboard.updateValues();
     
@@ -123,7 +145,7 @@ tArmPosition = tPosition;
     if(Math.abs(tLastPos - getTopArmPosition()) < 10000){
         tErrorSum += dt * (tLastPos - getTopArmPosition());
     }
-    double output = MathUtil.clamp(tError*0.000004 + errorrate *0.0+tErrorSum*0.0, -1, 1);
+    double output = MathUtil.clamp(tError*0.000004 + errorrate *0.0+tErrorSum*0.00001, -1, 1);
 
     SmartDashboard.putNumber("Top PID Output", ( output));
     SmartDashboard.updateValues();
@@ -139,7 +161,6 @@ tArmPosition = tPosition;
  
   }
   public void setBottomPosition(BottomArmPosition bPosition){
-bArmPosition = bPosition;
     SmartDashboard.putNumber("bottom pos PID", MathUtil.applyDeadband((bPosition.getPos() - getBottomArmPosition()) * 0.00000095, 0.01));
     SmartDashboard.updateValues();
 

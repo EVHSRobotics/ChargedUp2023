@@ -4,13 +4,19 @@
 
 package frc.robot.autos;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Arm;
 import frc.robot.Constants.Intake;
 import frc.robot.commands.FourBar;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Vision;
+import frc.robot.subsystems.Arm.BottomArmPosition;
+import frc.robot.subsystems.Arm.TopArmPosition;
 import frc.robot.subsystems.Intake.GameObject;
+import frc.robot.subsystems.Wrist.WristPosition;
 
 public class SwerveCommand extends CommandBase {
 
@@ -19,6 +25,8 @@ public class SwerveCommand extends CommandBase {
   private Vision vision;
   private TeleopSwerve teleopSwerve;
 
+  private boolean isFinished = false;
+  
   public static enum PathCommandAction {
       
     INTAKECONE, INTAKECUBE, OUTTAKECONE, OUTTAKECUBE, AUTOALIGNRAMP;
@@ -36,7 +44,34 @@ public class SwerveCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    switch (commandAction) {
+      case INTAKECONE:
+        // fourBar.activateCone();
+        break;
+      case AUTOALIGNRAMP:
+        teleopSwerve.autoAlignRamp();
+        break;
+      case INTAKECUBE:
+      // fourBar.activateCube();
+        break;
+      case OUTTAKECONE:
+      // fourBar.activateCube();
+
+        break;
+      case OUTTAKECUBE:
+      fourBar.gameObject = GameObject.CUBE;
+      fourBar.tPositionScoring = TopArmPosition.STRAIGHT;
+      fourBar.bPositionScoring = BottomArmPosition.IN;
+      fourBar.wPositionScoring = WristPosition.SHOOTING;
+      
+        break;
+      default:
+
+        break;
+      
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -57,9 +92,10 @@ public class SwerveCommand extends CommandBase {
 
         break;
       case OUTTAKECUBE:
-      fourBar.gameObject = GameObject.CUBE;
-      fourBar.shoot(true);
-
+      
+      isFinished = fourBar.shootAuto(true);
+SmartDashboard.putBoolean("Auto Running", isFinished);
+SmartDashboard.updateValues();
         break;
       default:
 
@@ -75,6 +111,6 @@ public class SwerveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }
