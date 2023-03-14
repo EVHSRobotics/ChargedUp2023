@@ -29,7 +29,8 @@ public class Limelight extends SubsystemBase {
     SmartDashboard.putNumber("tx", tx.getDouble(0));
     SmartDashboard.updateValues();
   }
-
+  
+  // gets the error of the limelight to the detected object
   public double getX() {
     double x = tx.getDouble(0.0);
    

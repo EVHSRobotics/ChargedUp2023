@@ -14,17 +14,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VideoServer extends SubsystemBase {
 
+  // Gets usb camera and sink which contains video frames
   private UsbCamera camera;
   private CvSink cvSink;
 
   /** Creates a new VideoServer. */
   public VideoServer() {
-camera = CameraServer.startAutomaticCapture();
+    camera = CameraServer.startAutomaticCapture();
    camera.setResolution(600, 600);
     this.cvSink = CameraServer.getVideo(); 
-    // camera.setVideoMode(PixelFormat.kRGB565
-    // , 600, 720/2, 30);
-    // camera.setBrightness(60);
+
+    // Puts the video in shuffleboard
     CameraServer.putVideo("Video", 600, 600);
   }
 

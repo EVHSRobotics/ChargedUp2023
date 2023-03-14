@@ -24,7 +24,6 @@ public class SwerveCommand extends CommandBase {
   private FourBar fourBar;
   private Vision vision;
   private TeleopSwerve teleopSwerve;
-
   private boolean isFinished = false;
   
   public static enum PathCommandAction {
@@ -93,9 +92,9 @@ public class SwerveCommand extends CommandBase {
         break;
       case OUTTAKECUBE:
       
-      isFinished = fourBar.shootAuto(true);
-SmartDashboard.putBoolean("Auto Running", isFinished);
-SmartDashboard.updateValues();
+      this.isFinished = fourBar.shootAuto(true);
+
+      SmartDashboard.putBoolean("d", isFinished);
         break;
       default:
 

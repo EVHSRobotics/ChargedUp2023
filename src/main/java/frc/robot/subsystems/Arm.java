@@ -27,15 +27,15 @@ public class Arm extends SubsystemBase {
 
   private Spark sparkLights;
 
-double bErrorSum = 0;
-double tErrorSum = 0;
-double bError = 0;
-double tError = 0;
-double bLastError = 0;
-double tLastError = 0;
-double lastTimestamp = 0;
-double tLastPos = 0;
-double bLastPos = 0;
+private double bErrorSum = 0;
+private double tErrorSum = 0;
+private double bError = 0;
+private double tError = 0;
+private double bLastError = 0;
+private double tLastError = 0;
+private double lastTimestamp = 0;
+private double tLastPos = 0;
+private double bLastPos = 0;
 
 public enum SparkLEDColors {
 
@@ -53,10 +53,10 @@ public enum SparkLEDColors {
 
 }
 
-
+  // enum to get various positions of the top motor
   public enum TopArmPosition {
 
-    DOWN(0), MIDDLE(190000), STRAIGHT(395000);
+    DOWN(0), MIDDLE(190000), GROUNDMIDDLE(210000), STRAIGHT(395000);
  
      private double tArmSensorPosition;
      public double getPos() {
@@ -66,6 +66,9 @@ public enum SparkLEDColors {
        this.tArmSensorPosition = tArmSensorPosition;
      }
    }
+
+    // enum to get various positions of the bottom motor
+
    public enum BottomArmPosition {
 
     IN(0), MIDDLE(-227500), OUT(-455000);
@@ -107,6 +110,7 @@ public enum SparkLEDColors {
   }
 
   public void setLED(SparkLEDColors ledColor) {
+  
     sparkLights.set(ledColor.getColor());
   }
 
@@ -133,7 +137,7 @@ public enum SparkLEDColors {
   // }
   }
 
-  public void setTopPosition(TopArmPosition tPosition){
+  public double setTopPosition(TopArmPosition tPosition){
     SmartDashboard.putNumber("top pos PID", MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
     SmartDashboard.updateValues();
     
@@ -157,6 +161,9 @@ public enum SparkLEDColors {
     
     topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband(output, 0.05));
 
+
+    // We can know how much the output is off by in caller
+    return MathUtil.applyDeadband(output, 0.05);
     // topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
  
   }

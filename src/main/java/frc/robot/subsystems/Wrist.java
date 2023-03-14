@@ -18,9 +18,10 @@ import frc.robot.Constants;
 
 public class Wrist extends SubsystemBase {
 
+  // Wrist Position encoder setpoints
   public enum WristPosition{
 
-   UP(0), MIDDLE(-160000), SHOOTING(-220100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-170100), STRAIGHTCONE(-160100);
+   UP(20000), MIDDLE(-160000), SHOOTING(-220100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-170100), STRAIGHTCONE(-160100), GROUNDCONE(-360000);
 
     public double wristSensorPosition;
     private WristPosition(double wristSensorPosition) {
@@ -28,8 +29,7 @@ public class Wrist extends SubsystemBase {
     }
   }
 
-    public WristPosition currentWristPosition = WristPosition.UP;
-    public TalonFX wrist;
+    private TalonFX wrist;
     
     private double baseStartAngle = 102; 
     private double topStartAngle = 15;
@@ -47,6 +47,7 @@ public class Wrist extends SubsystemBase {
     double lastTimestamp;
 
     
+    // Resets all wristand sets encoder pos to 0
     public Wrist(){
         wrist = new TalonFX(Constants.Arm.wristMotor);    
         wrist.setSelectedSensorPosition(0);    
@@ -54,17 +55,16 @@ public class Wrist extends SubsystemBase {
         wrist.setNeutralMode(NeutralMode.Brake);
         lastWristPos = 0.0;
     }
+    // move wrist based on speed
     public void moveWrist(double speed){
       
-        lastWristPos = getWristMotorPosition();
+        // lastWristPos = getWristMotorPosition();
         wrist.set(ControlMode.PercentOutput, speed);
-
-
-      
 
     }
 
 
+    // gets the wrist position
     public double getWristMotorPosition() {
       return wrist.getSelectedSensorPosition();
     }
@@ -79,13 +79,14 @@ public class Wrist extends SubsystemBase {
 
     }
 
+    // resets wrist encoders
     public void resetWristEncoder() {
       wrist.setSelectedSensorPosition(0);
     }
 
-    public void setWristPosition(WristPosition wPosition) {
-
-      
+    // PID code for wrist
+    // error is difference between expected vs current wrist position
+    public double setWristPosition(WristPosition wPosition) {
 
       error = wPosition.wristSensorPosition - wrist.getSelectedSensorPosition();
 
@@ -97,14 +98,12 @@ public class Wrist extends SubsystemBase {
       double output = MathUtil.clamp(error*0.000008 + errorrate*0.0 + errorsum*0.0, -1, 1);
 
       wrist.set(ControlMode.PercentOutput, output);
- 
       lastTimestamp = Timer.getFPGATimestamp();
       lasterror = error;
       lastWristPos = wrist.getSelectedSensorPosition();
-      SmartDashboard.putNumber("error", error);
-      SmartDashboard.putNumber("errorRate", errorrate);
-      SmartDashboard.putNumber("errorSum", errorsum);
-      SmartDashboard.putNumber("wristPos", output);
+      SmartDashboard.putNumber("out", output);
       SmartDashboard.updateValues();
+      return MathUtil.applyDeadband(output, 0.05);
+
     }
 }

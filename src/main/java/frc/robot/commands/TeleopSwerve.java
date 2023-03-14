@@ -68,19 +68,8 @@ public class TeleopSwerve extends CommandBase {
             driveSpeedEntry.setDouble(translationVal*Constants.Swerve.maxSpeed);
             rotationalSpeedEntry.setDouble(rotationVal*Constants.Swerve.maxAngularVelocity);
 
-        SmartDashboard.putNumber("AHRS Nav Angle X", s_Swerve.gyro.getQuaternionX());
-        SmartDashboard.putNumber("AHRS Nav Angle Y", s_Swerve.gyro.getQuaternionY());
-        SmartDashboard.putNumber("AHRS Nav Angle Z", s_Swerve.gyro.getQuaternionZ());
-        SmartDashboard.putNumber("AHRS Nav Angle Roll", gyroRoll());
-        SmartDashboard.putNumber("AHRS Nav Angle Pitch", gyroPitch());
-        SmartDashboard.putNumber("AHRS Nav Angle Yaw", gyroYaw());
-        SmartDashboard.putNumber("AHRS Nav Angle Deg", s_Swerve.gyro.getRotation2d().getDegrees());
-        SmartDashboard.putNumber("AHRS Nav Angle Cos", s_Swerve.gyro.getRotation2d().getCos());
-        SmartDashboard.putNumber("AHRS Nav Angle Sin", s_Swerve.gyro.getRotation2d().getSin());
-        SmartDashboard.putNumber("AHRS Nav Angle rot", s_Swerve.gyro.getRotation2d().getRotations());
-        SmartDashboard.putNumber("AHRS Nav Angle angle", s_Swerve.gyro.getAngle());
-        SmartDashboard.putNumber("AHRS Nav Angle heading", s_Swerve.gyro.getCompassHeading());
-        SmartDashboard.updateValues();
+     
+
         
         if (swerveController.getXButton()) {
 

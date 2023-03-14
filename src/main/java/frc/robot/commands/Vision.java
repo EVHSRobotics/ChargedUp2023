@@ -83,7 +83,7 @@ public class Vision extends CommandBase {
     if(Math.abs(x) < 0.1){
         errorsum += dt *  x;
     }
-    double output = MathUtil.clamp(error*0.00025 + errorrate *0+errorsum*0.0001, -1, 1);
+    double output = MathUtil.clamp(error*0.045 + errorrate *0+errorsum*0.0, -1, 1);
 
     SmartDashboard.putNumber("limelight", ( output));
     SmartDashboard.updateValues();
@@ -91,7 +91,7 @@ public class Vision extends CommandBase {
     lasterror = error;
     
     swerve.drive(new Translation2d(
-        0, MathUtil.applyDeadband(output, 0.001)).times(Constants.Swerve.maxSpeed).times(0.5),
+        0, MathUtil.applyDeadband(output, 0.05)).times(Constants.Swerve.maxSpeed).times(0.5),
         0, false, false);
   }
 

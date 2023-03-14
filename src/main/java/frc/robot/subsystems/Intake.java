@@ -40,6 +40,8 @@ public class Intake extends SubsystemBase {
       this.objectColor = color;
     }
   }
+
+  
   private TalonSRX intakeMotor;
 
   private DigitalInput bannerIntake;
@@ -74,7 +76,7 @@ public class Intake extends SubsystemBase {
 
 
   public double getIntakeVelocity() {
-    return intakeMotor.getSelectedSensorVelocity();
+    return intakeMotor.getSupplyCurrent();
   }
   // Gets intake current in Amps
   // more than 20 AMPS = Motor stalling
