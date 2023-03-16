@@ -21,7 +21,7 @@ public class VideoServer extends SubsystemBase {
   /** Creates a new VideoServer. */
   public VideoServer() {
     camera = CameraServer.startAutomaticCapture();
-   camera.setResolution(600, 600);
+   camera.setResolution(1024, 768);
     this.cvSink = CameraServer.getVideo(); 
 
     // Puts the video in shuffleboard

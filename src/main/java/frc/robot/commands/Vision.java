@@ -61,15 +61,7 @@ public class Vision extends CommandBase {
 
       aimLimelight();
     }
-    if (xboxController.getYButton()) {
-      for (SwerveModule mod : swerve.mSwerveMods) {
-
-        double absolutePosition = Conversions.degreesToFalcon(mod.getCanCoder().getDegrees() - 100,
-            Constants.Swerve.angleGearRatio);
-        mod.mAngleMotor.setSelectedSensorPosition(absolutePosition);
-      }
-    }
-
+   
   }
 
   public void aimLimelight() {

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.sql.Time;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
@@ -45,7 +46,7 @@ public class FourBar extends CommandBase {
   private boolean cubeBooleanFlag = false;
   private boolean deployIntake = false;
   private boolean deployShoot = false;
-  public GameObject gameObject = GameObject.CUBE;
+  public GameObject gameObject = GameObject.CONE;
   double outtakePower = 1;
   private double shootArmTime = -1;
 
@@ -145,17 +146,20 @@ public class FourBar extends CommandBase {
     // If the intake is high, then i first set the arm position to straight, set the wirst to high intake
     if (cIntakeType == IntakeType.HIGH) {
       if (action) {
-        arm.setTopPosition(TopArmPosition.STRAIGHT);
-        wrist.setWristPosition(WristPosition.HIGHINTAKE);
         
-        // If the motor is stalling the intake current goes around 24, so
+        if(Math.abs(arm.setTopPosition(TopArmPosition.HIGHINTAKE)) <= 0.2) {
+          wrist.setWristPosition(WristPosition.HIGHINTAKE);
+ // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-        if (intake.getIntakeCurrent() < 23) {
+        if (Math.abs(intake.getIntakeCurrent()) < 22) {
           intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
         }
         else {
           deployIntake = false;
         }
+        }
+        
+       
         
         // Set the LEDS based on what game object we are intaking
         if (gameObject == GameObject.CUBE) {
@@ -186,7 +190,7 @@ public class FourBar extends CommandBase {
 
         // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-        if (intake.getIntakeCurrent() < 23) {
+        if (Math.abs(intake.getIntakeCurrent()) < 22) {
           intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
         }
         else {
@@ -206,14 +210,14 @@ public class FourBar extends CommandBase {
           double pid = arm.setTopPosition(TopArmPosition.GROUNDMIDDLE);
           SmartDashboard.putNumber("jiefj", pid);
           SmartDashboard.updateValues();
-          if (arm.setTopPosition(TopArmPosition.GROUNDMIDDLE) <= 0.1) {
+          if (Math.abs(arm.setTopPosition(TopArmPosition.GROUNDMIDDLE)) <= 0.1) {
             // Runs the intake for the cone
             intake.runIntake(outtakePower);
             // Move wrist for the ground cone position
             wrist.setWristPosition(WristPosition.GROUNDCONE);
             // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-            if (intake.getIntakeCurrent() < 23) {
+            if (Math.abs(intake.getIntakeCurrent()) < 22) {
               intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
               // Once intaked, we can move the intkae back up
             }
@@ -231,6 +235,13 @@ public class FourBar extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    if(driveController.getYButtonPressed()){
+      arm.topArm.setNeutralMode(NeutralMode.Coast);
+      arm.bottomArm.setNeutralMode(NeutralMode.Coast);
+      wrist.wrist.setNeutralMode(NeutralMode.Coast);
+    }
+
 
     SmartDashboard.putNumber("volts bus", arm.topArm.getBusVoltage());
     SmartDashboard.putNumber("motor out ", arm.topArm.getMotorOutputVoltage());
@@ -290,23 +301,23 @@ public class FourBar extends CommandBase {
     // This is for the dpad, where if you click the top it will reset all of the properties for the top scoring
     if (xboxController.getPOV() == 0) {
       shootArmTime = -1;
-      outtakePower = 0.55;
+      outtakePower = 0.8;
 
       tPositionScoring = TopArmPosition.STRAIGHT;
-      bPositionScoring = BottomArmPosition.IN;
+      bPositionScoring = BottomArmPosition.MIDDLE;
       wPositionScoring = WristPosition.SHOOTING;
-      deployShoot = !deployShoot;
+      deployShoot = true;
 
     } 
         // This is for the dpad, where if you click the middle it will reset all of the properties for the middle scoring
     else if (xboxController.getPOV() == 90) {
       shootArmTime = -1;
 
-      outtakePower = 0.55;
+      outtakePower = 0.8;
       tPositionScoring = TopArmPosition.MIDDLE;
       bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.MIDDLE;
-      deployShoot = !deployShoot;
+      deployShoot = true;
     } 
     // This is for the dpad, where if you click the bottom it will reset all of the properties for the bottom scoring
     else if (xboxController.getPOV() == 180) {
@@ -316,7 +327,7 @@ public class FourBar extends CommandBase {
       tPositionScoring = TopArmPosition.DOWN;
       bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.UP;
-      deployShoot = !deployShoot;
+      deployShoot = true;
     }
     // if you click anywhere else on the dpad it will stop the deploy shoot
     else if (xboxController.getPOV() == 270) {
@@ -336,18 +347,34 @@ public class FourBar extends CommandBase {
       wrist.setWristPosition(WristPosition.UP);
       arm.setLED(SparkLEDColors.RAINBOW);
 
+        
+
+        if (xboxController.getLeftTriggerAxis() > 0) {
+
+          intake.runIntake(0.7);
+  
+        } else if (xboxController.getRightTriggerAxis() > 0) {
+  
+          intake.runIntake(-0.7);
+  
+        } else {
+          
       // Manual Intake Control
-      if (xboxController.getLeftTriggerAxis() > 0) {
-
-        intake.runIntake(0.7);
-
-      } else if (xboxController.getRightTriggerAxis() > 0) {
-
-        intake.runIntake(-0.7);
-
-      } else {
+      if (Math.abs(intake.getIntakeCurrent()) < 22) {
         intake.runIntake(0);
+
       }
+      else {
+        intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
+
+      }
+
+        }
+        // Once intaked, we can move the intkae back up
+      
+     
+      
+      
     }
 
     SmartDashboard.putNumber("Top Arm", arm.getTopArmPosition());

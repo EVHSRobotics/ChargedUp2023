@@ -22,7 +22,7 @@ import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
 
-  private TalonFX bottomArm;
+  public TalonFX bottomArm;
   public TalonFX topArm;
 
   private Spark sparkLights;
@@ -56,9 +56,10 @@ public enum SparkLEDColors {
   // enum to get various positions of the top motor
   public enum TopArmPosition {
 
-    DOWN(0), MIDDLE(190000), GROUNDMIDDLE(210000), STRAIGHT(395000);
+    DOWN(5000), MIDDLE(175000), GROUNDMIDDLE(250000), STRAIGHT(395000), HIGHINTAKE(410000);
  
      private double tArmSensorPosition;
+     
      public double getPos() {
       return tArmSensorPosition;
      }
@@ -71,7 +72,7 @@ public enum SparkLEDColors {
 
    public enum BottomArmPosition {
 
-    IN(0), MIDDLE(-227500), OUT(-455000);
+    IN(-5000), MIDDLE(-95500), OUT(-455000);
  
      private double bArmSensorPosition;
      public double getPos() {
@@ -168,7 +169,7 @@ public enum SparkLEDColors {
  
   }
   public void setBottomPosition(BottomArmPosition bPosition){
-    SmartDashboard.putNumber("bottom pos PID", MathUtil.applyDeadband((bPosition.getPos() - getBottomArmPosition()) * 0.00000095, 0.01));
+    SmartDashboard.putNumber("bottom pos PID", MathUtil.applyDeadband((bPosition.getPos() - getBottomArmPosition()) * 0.000095, 0.01));
     SmartDashboard.updateValues();
 
 
@@ -179,7 +180,7 @@ public enum SparkLEDColors {
     if(Math.abs(bLastPos - getBottomArmPosition()) < 500){
         bErrorSum += dt * (bLastPos - getBottomArmPosition());
     }
-    double output = MathUtil.clamp(bError*0.0008 + errorrate *0+bErrorSum*0, -1, 1);
+    double output = MathUtil.clamp(bError* 0.000095 + errorrate *0+bErrorSum*0, -1, 1);
 
     SmartDashboard.putNumber("Bottom PID Output", ( output));
     SmartDashboard.updateValues();

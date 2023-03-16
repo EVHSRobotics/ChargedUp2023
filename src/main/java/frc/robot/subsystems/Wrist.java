@@ -21,7 +21,7 @@ public class Wrist extends SubsystemBase {
   // Wrist Position encoder setpoints
   public enum WristPosition{
 
-   UP(20000), MIDDLE(-160000), SHOOTING(-220100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-170100), STRAIGHTCONE(-160100), GROUNDCONE(-360000);
+   UP(-5000), MIDDLE(-100000), SHOOTING(-235100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-160100), STRAIGHTCONE(-170100), GROUNDCONE(-250000);
 
     public double wristSensorPosition;
     private WristPosition(double wristSensorPosition) {
@@ -29,7 +29,7 @@ public class Wrist extends SubsystemBase {
     }
   }
 
-    private TalonFX wrist;
+    public TalonFX wrist;
     
     private double baseStartAngle = 102; 
     private double topStartAngle = 15;
@@ -96,7 +96,8 @@ public class Wrist extends SubsystemBase {
           errorsum += dt * (lastWristPos - getWristMotorPosition());
       }
       double output = MathUtil.clamp(error*0.000008 + errorrate*0.0 + errorsum*0.0, -1, 1);
-
+      double lowerLimit = -300000;
+      if(wrist.getSelectedSensorPosition() < lowerLimit && output < 0) output = 0;
       wrist.set(ControlMode.PercentOutput, output);
       lastTimestamp = Timer.getFPGATimestamp();
       lasterror = error;
