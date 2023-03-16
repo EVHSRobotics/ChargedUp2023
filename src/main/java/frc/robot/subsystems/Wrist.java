@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -28,7 +29,7 @@ public class Wrist extends SubsystemBase {
       this.wristSensorPosition = wristSensorPosition;
     }
   }
-
+  
     public TalonFX wrist;
     
     private double baseStartAngle = 102; 
@@ -37,7 +38,7 @@ public class Wrist extends SubsystemBase {
     private double wristAngleongnokizzy = 90; 
     private final double topArmEncodertickstoangle = 2048*360;
     private final double bottomArmEncodertickstoangle = 2048*360;    
-    private final double gearratio = 1;    
+    private final double gearratio = 0;
     private final double kp = 0.001;
     private double lastWristPos = 0;
     double errorsum = 0;
@@ -45,12 +46,24 @@ public class Wrist extends SubsystemBase {
     double error;
 
     double lastTimestamp;
-
     
+    // setpoints for mag encoder
+    // public enum WristPosition{
+
+    //   UP(-5000*2/100), MIDDLE(-100000*2/100), SHOOTING(-235100*2/100), HIGHINTAKE(-250100*2/100), STRAIGHT(-150100*2/100), STRAIGHTCUBE(-160100*2/100), STRAIGHTCONE(-170100*2/100), GROUNDCONE(-250000*2/100);
+   
+    //    public double wristSensorPosition;
+    //    private WristPosition(double wristSensorPosition) {
+    //      this.wristSensorPosition = wristSensorPosition;
+    //    }
+    //  }
     // Resets all wristand sets encoder pos to 0
     public Wrist(){
         wrist = new TalonFX(Constants.Arm.wristMotor);    
+        // wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
         wrist.setSelectedSensorPosition(0);    
+
+        
 
         wrist.setNeutralMode(NeutralMode.Brake);
         lastWristPos = 0.0;
@@ -86,6 +99,7 @@ public class Wrist extends SubsystemBase {
 
     // PID code for wrist
     // error is difference between expected vs current wrist position
+    // p value for wrist with mag encoder should be 0.0016, integrator range 200
     public double setWristPosition(WristPosition wPosition) {
 
       error = wPosition.wristSensorPosition - wrist.getSelectedSensorPosition();

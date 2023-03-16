@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
@@ -68,6 +69,23 @@ public enum SparkLEDColors {
      }
    }
 
+
+  // enum values for ctre mag encoder
+  //  high intake went up around 90 deg rest of calculations based off that 
+  //  public enum TopArmPosition {
+
+  //   DOWN(12), MIDDLE(437), GROUNDMIDDLE(624), STRAIGHT(987), HIGHINTAKE(4096/4);
+ 
+  //    private double tArmSensorPosition;
+     
+  //    public double getPos() {
+  //     return tArmSensorPosition;
+  //    }
+  //    private TopArmPosition(double tArmSensorPosition) {
+  //      this.tArmSensorPosition = tArmSensorPosition;
+  //    }
+  //  }
+
     // enum to get various positions of the bottom motor
 
    public enum BottomArmPosition {
@@ -90,7 +108,7 @@ public enum SparkLEDColors {
 
     topArm.setNeutralMode(NeutralMode.Brake);
     bottomArm.setNeutralMode(NeutralMode.Brake);
-
+    // topArm.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
     sparkLights = new Spark(Constants.Arm.colorsDIO);
 
     sparkLights.set(SparkLEDColors.RAINBOW.getColor());
@@ -138,6 +156,40 @@ public enum SparkLEDColors {
   // }
   }
 
+  // public double setTopPosition(TopArmPosition tPosition){
+  //   SmartDashboard.putNumber("top pos PID", MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
+  //   SmartDashboard.updateValues();
+    
+    
+  //   tError = tPosition.getPos() - getTopArmPosition();
+
+  //   double dt = Timer.getFPGATimestamp() - lastTimestamp;
+  //   double errorrate = (tError-tLastError)/dt;
+  //   if(Math.abs(tLastPos - getTopArmPosition()) < 10000){
+  //       tErrorSum += dt * (tLastPos - getTopArmPosition());
+  //   }
+  //   double output = MathUtil.clamp(tError*0.000004 + errorrate *0.0+tErrorSum*0.00001, -1, 1);
+
+  //   SmartDashboard.putNumber("Top PID Output", ( output));
+  //   SmartDashboard.updateValues();
+  //   lastTimestamp = Timer.getFPGATimestamp();
+  //   tLastError = tError;
+  //   tLastPos = getTopArmPosition();
+
+
+    
+  //   topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband(output, 0.05));
+
+
+  //   // We can know how much the output is off by in caller
+  //   return MathUtil.applyDeadband(output, 0.05);
+  //   // topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
+ 
+  // }
+
+
+  // for ctre mag encoder have to change pid values as well if we have to but hopefully not
+  // p value for mag encdeor proportionally should be 0.0012, integrator range 25
   public double setTopPosition(TopArmPosition tPosition){
     SmartDashboard.putNumber("top pos PID", MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
     SmartDashboard.updateValues();
