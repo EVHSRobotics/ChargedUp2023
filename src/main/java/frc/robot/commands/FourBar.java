@@ -147,17 +147,13 @@ public class FourBar extends CommandBase {
     if (cIntakeType == IntakeType.HIGH) {
       if (action) {
         
-        if(Math.abs(arm.setTopPosition(TopArmPosition.HIGHINTAKE)) <= 0.2) {
+        arm.setTopPosition(TopArmPosition.HIGHINTAKE);
           wrist.setWristPosition(WristPosition.HIGHINTAKE);
  // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-        if (Math.abs(intake.getIntakeCurrent()) < 22) {
           intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
-        }
-        else {
-          deployIntake = false;
-        }
-        }
+     
+        
         
        
         
@@ -190,13 +186,8 @@ public class FourBar extends CommandBase {
 
         // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-        if (Math.abs(intake.getIntakeCurrent()) < 22) {
           intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
-        }
-        else {
-          deployIntake = false;
-
-        }
+      
       }
       }
       // This is for the ground intake, which would be used to intake
@@ -217,14 +208,9 @@ public class FourBar extends CommandBase {
             wrist.setWristPosition(WristPosition.GROUNDCONE);
             // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-            if (Math.abs(intake.getIntakeCurrent()) < 22) {
               intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
               // Once intaked, we can move the intkae back up
-            }
-            else {
-              deployIntake = false;
-
-            }
+          
           }
 
         }

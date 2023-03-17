@@ -57,7 +57,7 @@ public enum SparkLEDColors {
   // enum to get various positions of the top motor
   public enum TopArmPosition {
 
-    DOWN(5000), MIDDLE(175000), GROUNDMIDDLE(250000), STRAIGHT(395000), HIGHINTAKE(410000);
+    DOWN(5000), MIDDLE(120000), GROUNDMIDDLE(250000), STRAIGHT(400000), HIGHINTAKE(370000);
  
      private double tArmSensorPosition;
      
@@ -200,9 +200,9 @@ public enum SparkLEDColors {
     double dt = Timer.getFPGATimestamp() - lastTimestamp;
     double errorrate = (tError-tLastError)/dt;
     if(Math.abs(tLastPos - getTopArmPosition()) < 10000){
-        tErrorSum += dt * (tLastPos - getTopArmPosition());
+        tErrorSum += dt * tError;
     }
-    double output = MathUtil.clamp(tError*0.000004 + errorrate *0.0+tErrorSum*0.00001, -1, 1);
+    double output = MathUtil.clamp(tError*0.000004 + errorrate *0.0+tErrorSum*0.00000001, -1, 1);
 
     SmartDashboard.putNumber("Top PID Output", ( output));
     SmartDashboard.updateValues();
