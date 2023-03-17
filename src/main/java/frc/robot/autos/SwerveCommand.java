@@ -49,7 +49,6 @@ public class SwerveCommand extends CommandBase {
         // fourBar.activateCone();
         break;
       case AUTOALIGNRAMP:
-        teleopSwerve.autoAlignRamp();
         break;
       case INTAKECUBE:
       // fourBar.activateCube();
@@ -63,7 +62,7 @@ public class SwerveCommand extends CommandBase {
       fourBar.tPositionScoring = TopArmPosition.STRAIGHT;
       fourBar.bPositionScoring = BottomArmPosition.IN;
       fourBar.wPositionScoring = WristPosition.SHOOTING;
-      
+      fourBar.shootArmTime = -1;
         break;
       default:
 

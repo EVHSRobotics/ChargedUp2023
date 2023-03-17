@@ -48,7 +48,7 @@ public class FourBar extends CommandBase {
   private boolean deployShoot = false;
   public GameObject gameObject = GameObject.CONE;
   double outtakePower = 1;
-  private double shootArmTime = -1;
+  public double shootArmTime = -1;
 
   private GenericEntry boardIntakeIn;
   private GenericEntry boardLowIntake;
@@ -222,11 +222,11 @@ public class FourBar extends CommandBase {
   @Override
   public void execute() {
 
-    if(driveController.getYButtonPressed()){
-      arm.topArm.setNeutralMode(NeutralMode.Coast);
+    // if(driveController.getYButtonPressed()){
+      // arm.topArm.setNeutralMode(NeutralMode.Coast);
       // arm.bottomArm.setNeutralMode(NeutralMode.Coast);
-      wrist.wrist.setNeutralMode(NeutralMode.Coast);
-    }
+      // wrist.wrist.setNeutralMode(NeutralMode.Coast);
+    // }
 
 
     SmartDashboard.putNumber("volts bus", arm.topArm.getBusVoltage());

@@ -125,13 +125,13 @@ public class RobotContainer {
 
         // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
     // for every path in the group
-    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Basic Backup", new PathConstraints(1.5, 1));
+    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Left Basic Backup", new PathConstraints(1.5, 1));
     
     // This is just an example event map. It would be better to have a constant, global event map
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("Auto Align Ramp", new SwerveCommand(PathCommandAction.AUTOALIGNRAMP, fourBar, vision, s_Swerve));
-    eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, s_Swerve));
+    // eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, s_Swerve));
     // eventMap.put("Outake Cube 1", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Outake Cone 1", new SwerveCommand(PathCommandAction.OUTTAKECONE, fourBar, vision, teleopSwerve));
     // eventMap.put("Intake Cube 2", new SwerveCommand(PathCommandAction.INTAKECUBE, fourBar, vision, teleopSwerve));
