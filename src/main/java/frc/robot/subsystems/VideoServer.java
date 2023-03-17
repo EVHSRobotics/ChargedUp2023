@@ -21,11 +21,11 @@ public class VideoServer extends SubsystemBase {
   /** Creates a new VideoServer. */
   public VideoServer() {
     camera = CameraServer.startAutomaticCapture();
-   camera.setResolution(1024, 768);
+   camera.setResolution(1024/2, 768/2);
     this.cvSink = CameraServer.getVideo(); 
 
     // Puts the video in shuffleboard
-    CameraServer.putVideo("Video", 600, 600);
+    CameraServer.putVideo("Video", 1024/2, 768/2);
   }
 
   @Override

@@ -120,7 +120,7 @@ public class FourBar extends CommandBase {
         shootArmTime = System.currentTimeMillis();
       }
       arm.setTopPosition(tPositionScoring);
-      arm.setBottomPosition(bPositionScoring);
+      // arm.setBottomPosition(bPositionScoring);
 
       if (System.currentTimeMillis() - shootArmTime >= 5500) {
         deployShoot = false;
@@ -147,13 +147,13 @@ public class FourBar extends CommandBase {
     if (cIntakeType == IntakeType.HIGH) {
       if (action) {
         
-        arm.setTopPosition(TopArmPosition.HIGHINTAKE);
+        if (arm.setTopPosition(TopArmPosition.HIGHINTAKE) < 0.4) {
           wrist.setWristPosition(WristPosition.HIGHINTAKE);
  // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
           intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
      
-        
+        }
         
        
         
@@ -224,7 +224,7 @@ public class FourBar extends CommandBase {
 
     if(driveController.getYButtonPressed()){
       arm.topArm.setNeutralMode(NeutralMode.Coast);
-      arm.bottomArm.setNeutralMode(NeutralMode.Coast);
+      // arm.bottomArm.setNeutralMode(NeutralMode.Coast);
       wrist.wrist.setNeutralMode(NeutralMode.Coast);
     }
 
@@ -290,7 +290,7 @@ public class FourBar extends CommandBase {
       outtakePower = 0.8;
 
       tPositionScoring = TopArmPosition.STRAIGHT;
-      bPositionScoring = BottomArmPosition.MIDDLE;
+      bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.SHOOTING;
       deployShoot = true;
 
@@ -328,7 +328,7 @@ public class FourBar extends CommandBase {
 
     // If the intake and shoot are not deployed,
     if (!deployIntake && !deployShoot) {
-      arm.setBottomPosition(BottomArmPosition.IN);
+      // arm.setBottomPosition(BottomArmPosition.IN);
       arm.setTopPosition(TopArmPosition.DOWN);
       wrist.setWristPosition(WristPosition.UP);
       arm.setLED(SparkLEDColors.RAINBOW);
@@ -346,14 +346,14 @@ public class FourBar extends CommandBase {
         } else {
           
       // Manual Intake Control
-      if (Math.abs(intake.getIntakeCurrent()) < 22) {
+      // if (Math.abs(intake.getIntakeCurrent()) < 22) {
         intake.runIntake(0);
 
-      }
-      else {
-        intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
+      // }
+      // else {
+      //   intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
 
-      }
+      // }
 
         }
         // Once intaked, we can move the intkae back up
@@ -377,7 +377,7 @@ public class FourBar extends CommandBase {
         shootArmTime = System.currentTimeMillis();
       }
       arm.setTopPosition(tPositionScoring);
-      arm.setBottomPosition(bPositionScoring);
+      // arm.setBottomPosition(bPositionScoring);
 
       if (gameObject == GameObject.CUBE) {
         arm.setLED(SparkLEDColors.PURPLE);

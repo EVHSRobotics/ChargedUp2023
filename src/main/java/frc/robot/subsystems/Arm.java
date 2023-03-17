@@ -57,7 +57,7 @@ public enum SparkLEDColors {
   // enum to get various positions of the top motor
   public enum TopArmPosition {
 
-    DOWN(5000), MIDDLE(120000), GROUNDMIDDLE(250000), STRAIGHT(400000), HIGHINTAKE(370000);
+    DOWN(5000), MIDDLE(120000), GROUNDMIDDLE(250000), STRAIGHT(405000), HIGHINTAKE(374000);
  
      private double tArmSensorPosition;
      
