@@ -6,6 +6,8 @@ package frc.robot.autos;
 
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Arm;
@@ -91,7 +93,7 @@ public class SwerveCommand extends CommandBase {
         break;
       case OUTTAKECUBE:
       
-      this.isFinished = fourBar.shootAuto(true);
+       fourBar.shoot(fourBar.deployShoot);
 
       SmartDashboard.putBoolean("d", isFinished);
         break;
@@ -104,7 +106,8 @@ public class SwerveCommand extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+   }
 
   // Returns true when the command should end.
   @Override
