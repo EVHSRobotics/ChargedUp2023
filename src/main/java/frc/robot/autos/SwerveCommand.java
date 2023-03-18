@@ -65,6 +65,7 @@ public class SwerveCommand extends CommandBase {
       fourBar.bPositionScoring = BottomArmPosition.IN;
       fourBar.wPositionScoring = WristPosition.SHOOTING;
       fourBar.shootArmTime = -1;
+      fourBar.deployShoot = true;
         break;
       default:
 
@@ -93,9 +94,8 @@ public class SwerveCommand extends CommandBase {
         break;
       case OUTTAKECUBE:
       
-       fourBar.shoot(fourBar.deployShoot);
+       fourBar.shootAuto(fourBar.deployShoot);
 
-      SmartDashboard.putBoolean("d", isFinished);
         break;
       default:
 
@@ -112,6 +112,6 @@ public class SwerveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished;
+    return !fourBar.deployShoot;
   }
 }
