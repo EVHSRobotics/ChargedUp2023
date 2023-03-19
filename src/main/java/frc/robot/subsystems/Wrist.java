@@ -22,7 +22,7 @@ public class Wrist extends SubsystemBase {
   // Wrist Position encoder setpoints
   public enum WristPosition{
 
-   UP(-5000), MIDDLE(-100000), SHOOTING(-265100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-180100), STRAIGHTCONE(-190100), GROUNDCONE(-250000);
+   UP(-5000), MIDDLE(-100000), SHOOTING(-245100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-180100), STRAIGHTCONE(-190100), GROUNDCONE(-250000);
    
 
     public double wristSensorPosition;  

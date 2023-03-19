@@ -33,7 +33,7 @@ import frc.robot.subsystems.Arm;
 
 public class FourBar extends CommandBase {
 
-  private Wrist wrist;
+  public Wrist wrist;
   private Intake intake;
   public Arm arm;
   private XboxController xboxController;
@@ -45,8 +45,8 @@ public class FourBar extends CommandBase {
   private long currentIntakeTime = -1;
   private boolean cubeBooleanFlag = false;
   private boolean deployIntake = false;
-  private boolean deployShoot = false;
-  public GameObject gameObject = GameObject.CONE;
+  public boolean deployShoot = false;
+  public GameObject gameObject = GameObject.CUBE;
   double outtakePower = 1;
   public double shootArmTime = -1;
 
@@ -87,9 +87,11 @@ public class FourBar extends CommandBase {
   public void initialize() {
 
     // Resets Encoders at the start
-    arm.resetArmEncoders();
-    wrist.resetWristEncoder();
-
+    // arm.resetArmEncoders();
+    // wrist.resetWristEncoder();
+    wPositionScoring = WristPosition.UP;
+    tPositionScoring = TopArmPosition.DOWN;
+    bPositionScoring = BottomArmPosition.IN;
     // Resets deploy intake and shoot, shootime
     deployIntake = false;
     deployShoot = false;
@@ -122,6 +124,16 @@ public class FourBar extends CommandBase {
       arm.setTopPosition(tPositionScoring);
       // arm.setBottomPosition(bPositionScoring);
 
+      if (wPositionScoring == WristPosition.UP && bPositionScoring == BottomArmPosition.IN && tPositionScoring == TopArmPosition.DOWN) {
+        if (System.currentTimeMillis() - shootArmTime >= 700) {
+          deployShoot = false;
+        }
+        else {
+          intake.runIntake(gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
+
+        } 
+      }
+      else {
       if (System.currentTimeMillis() - shootArmTime >= 5500) {
         deployShoot = false;
 
@@ -134,7 +146,7 @@ public class FourBar extends CommandBase {
         wrist.setWristPosition(wPositionScoring);
 
       }
-
+    }
     }
 
   }
@@ -309,10 +321,11 @@ public class FourBar extends CommandBase {
     else if (xboxController.getPOV() == 180) {
       shootArmTime = -1;
 
-      outtakePower = 0.4;
+      outtakePower = 0.7;
       tPositionScoring = TopArmPosition.DOWN;
       bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.UP;
+        
       deployShoot = true;
     }
     // if you click anywhere else on the dpad it will stop the deploy shoot
@@ -335,11 +348,11 @@ public class FourBar extends CommandBase {
 
         
 
-        if (xboxController.getLeftTriggerAxis() > 0) {
+        if (xboxController.getLeftTriggerAxis() > 0.1) {
 
           intake.runIntake(0.7);
   
-        } else if (xboxController.getRightTriggerAxis() > 0) {
+        } else if (xboxController.getRightTriggerAxis() > 0.1) {
   
           intake.runIntake(-0.7);
   
@@ -369,8 +382,22 @@ public class FourBar extends CommandBase {
 
   }
 
-  // Auto Functions
-  public boolean shootAuto(boolean action) {
+   // This is the shoot method which can be fed a bool at all times
+   public void shootAuto(boolean action) {
+
+    // If the action is true, and the first time this is getting called in a
+    // routine, we reset shoot arm time
+    // Routine
+    // shoot arm time is reseted it is set to current system
+    // set the top position of the arm to the current scoring top
+    // set the bottom position of the arm to the current scoring bottom
+    // time based
+    // 5500 ms - resets the arm & wrist completely and stops calling the shoot
+    // function
+    // 5000 ms - resets the wrist positon back to stowed away state first when
+    // resetting
+    // 3000 ms - sets intake to run for 2000 ms
+    // 700 ms - sets wrist position to the variable pos
 
     if (action) {
       if (shootArmTime == -1) {
@@ -378,47 +405,83 @@ public class FourBar extends CommandBase {
       }
       arm.setTopPosition(tPositionScoring);
       // arm.setBottomPosition(bPositionScoring);
-
-      if (gameObject == GameObject.CUBE) {
-        arm.setLED(SparkLEDColors.PURPLE);
-      } else {
-        // Cone
-        arm.setLED(SparkLEDColors.YELLOW);
-      }
+    
       if (System.currentTimeMillis() - shootArmTime >= 5000) {
-        tPositionScoring = TopArmPosition.DOWN;
-        bPositionScoring = BottomArmPosition.IN;
-        intake.runIntake(0);
-        if (wrist.setWristPosition(WristPosition.UP) <= 0.05) {
-          SmartDashboard.putBoolean("update", true);
-          SmartDashboard.updateValues();
-          return true;
-        }
 
-        
-        return false;
-        
+        arm.rotateTop(0);
+
+        wrist.wrist.set(ControlMode.PercentOutput, 0);
+        deployShoot = false;
 
       } else if (System.currentTimeMillis() - shootArmTime >= 3000) {
+        
+        tPositionScoring = TopArmPosition.DOWN;
+        intake.runIntake(0);
+        wrist.setWristPosition(WristPosition.UP);
+      } else if (System.currentTimeMillis() - shootArmTime >= 2000) {
         intake.runIntake(gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
-return false;
+        arm.setLED(SparkLEDColors.SHOOT);
       } else if (System.currentTimeMillis() - shootArmTime >= 700) {
-        wrist.setWristPosition(WristPosition.SHOOTING);
-        return false;
-      }
-      else {
-        return false;
+        wrist.setWristPosition(wPositionScoring);
+
       }
     }
-    else {
-      return false;
-    }
+    
 
   }
+
+//   // Auto Functions
+//   public boolean shootAuto(boolean action) {
+
+//     if (action) {
+//       if (shootArmTime == -1) {
+//         shootArmTime = System.currentTimeMillis();
+//       }
+//       arm.setTopPosition(tPositionScoring);
+//       // arm.setBottomPosition(bPositionScoring);
+
+//       if (gameObject == GameObject.CUBE) {
+//         arm.setLED(SparkLEDColors.PURPLE);
+//       } else {
+//         // Cone
+//         arm.setLED(SparkLEDColors.YELLOW);
+//       }
+//       if (System.currentTimeMillis() - shootArmTime >= 5000) {
+//         tPositionScoring = TopArmPosition.DOWN;
+//         bPositionScoring = BottomArmPosition.IN;
+//         intake.runIntake(0);
+//         if (wrist.setWristPosition(WristPosition.UP) <= 0.05) {
+//           SmartDashboard.putBoolean("update", true);
+//           SmartDashboard.updateValues();
+//           return true;
+//         }
+
+        
+//         return false;
+        
+
+//       } else if (System.currentTimeMillis() - shootArmTime >= 3000) {
+//         intake.runIntake(gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
+// return false;
+//       } else if (System.currentTimeMillis() - shootArmTime >= 700) {
+//         wrist.setWristPosition(WristPosition.SHOOTING);
+//         return false;
+//       }
+//       else {
+//         return false;
+//       }
+//     }
+//     else {
+//       return false;
+//     }
+
+//   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
+    
   }
 
   // Returns true when the command should end.

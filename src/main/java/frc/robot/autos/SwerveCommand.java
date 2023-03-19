@@ -61,6 +61,7 @@ public class SwerveCommand extends CommandBase {
         break;
       case OUTTAKECUBE:
       fourBar.gameObject = GameObject.CUBE;
+      // Straight
       fourBar.tPositionScoring = TopArmPosition.STRAIGHT;
       fourBar.bPositionScoring = BottomArmPosition.IN;
       fourBar.wPositionScoring = WristPosition.SHOOTING;
@@ -112,6 +113,25 @@ public class SwerveCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !fourBar.deployShoot;
+    switch (commandAction) {
+      case INTAKECONE:
+        // fourBar.activateCone();
+        return false;
+      case AUTOALIGNRAMP:
+      return false;
+      case INTAKECUBE:
+      // fourBar.activateCube();
+      return false;
+      case OUTTAKECONE:
+      // fourBar.activateCube();
+
+        return false;
+      case OUTTAKECUBE:
+      
+      return !fourBar.deployShoot;
+      default:
+      return false;
+      
+    }    
   }
 }

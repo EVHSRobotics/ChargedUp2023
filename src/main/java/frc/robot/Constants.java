@@ -23,7 +23,7 @@ public final class Constants {
 
 
         // Banner
-        public static final int banner = 1;
+        public static final int banner = 2;
         public static int intakeMotor = 22;
     }
 

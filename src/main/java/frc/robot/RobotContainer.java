@@ -17,6 +17,9 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -57,6 +60,7 @@ public class RobotContainer {
     private final Arm arm;
     private final Wrist wrist;
     private final Intake intake;
+    private SendableChooser<String> autoChooser;
     // private final AprilScanner aprilScanner;
 
     private final XboxController driveController;
@@ -76,6 +80,17 @@ public class RobotContainer {
         driveController = new XboxController(Constants.Controller.driveControllerPort);
         operatorController = new XboxController(Constants.Controller.operatorControllerPort);
 
+        autoChooser = new SendableChooser<String>();
+        autoChooser.addOption("None", "None");
+        autoChooser.setDefaultOption("Left Basic Backup", "Left Basic Backup");
+        autoChooser.addOption("Middle Basic Backup", "Middle Basic Backup");
+        autoChooser.addOption("Right Basic Backup", "Right Basic Backup");
+        autoChooser.addOption("Left Shoot", "Left Shoot");
+        autoChooser.addOption("Middle Shoot", "Middle Shoot");
+        autoChooser.addOption("Right Shoot", "Right Shoot");
+
+        SmartDashboard.putData(autoChooser);
+        SmartDashboard.updateValues();
 
         s_Swerve = new TeleopSwerve(
             swerve, 
@@ -119,19 +134,24 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
 
+        if (autoChooser.getSelected() == "None") return null;
         // return new exampleAuto(s_Swerve);
         swerve.resetModulesToAbsolute();
+        fourBar.arm.resetArmEncoders();
+        fourBar.wrist.resetWristEncoder();
 
-
+        SmartDashboard.putString("auto", autoChooser.getSelected());
+        SmartDashboard.updateValues();
+        
         // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
     // for every path in the group
-    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Left Basic Backup", new PathConstraints(1.5, 1));
+    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(autoChooser.getSelected(), new PathConstraints(2, 1.5));
     
     // This is just an example event map. It would be better to have a constant, global event map
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("Auto Align Ramp", new SwerveCommand(PathCommandAction.AUTOALIGNRAMP, fourBar, vision, s_Swerve));
-    // eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, s_Swerve));
+    eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, s_Swerve));
     // eventMap.put("Outake Cube 1", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Outake Cone 1", new SwerveCommand(PathCommandAction.OUTTAKECONE, fourBar, vision, teleopSwerve));
     // eventMap.put("Intake Cube 2", new SwerveCommand(PathCommandAction.INTAKECUBE, fourBar, vision, teleopSwerve));
@@ -152,7 +172,7 @@ public class RobotContainer {
         swerve // The drive subsystem. Used to properly set the requirements of path following commands
     );
     
-    PathPlannerServer.startServer(5811);
+    // PathPlannerServer.startServer(5811);
 
     // Thread.sleep(1000);
     return autoBuilder.fullAuto(pathGroup);

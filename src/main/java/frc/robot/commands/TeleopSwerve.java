@@ -33,8 +33,8 @@ public class TeleopSwerve extends CommandBase {
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, XboxController swerveController) {
         this.s_Swerve = s_Swerve;
         this.limiter = new SlewRateLimiter[3];
-        for (int i = 0; i < 3; i++) this.limiter[i] = new SlewRateLimiter(2.5);
-        this.limiter[2] = new SlewRateLimiter(2.5);
+        for (int i = 0; i < 3; i++) this.limiter[i] = new SlewRateLimiter(3);
+        this.limiter[2] = new SlewRateLimiter(3);
         this.swerveController = swerveController;
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
@@ -55,6 +55,7 @@ public class TeleopSwerve extends CommandBase {
         double strafeVal = MathUtil.applyDeadband(limiter[1].calculate(strafeSup.getAsDouble()), Constants.stickDeadband);
         double rotationVal = MathUtil.applyDeadband(limiter[2].calculate(rotationSup.getAsDouble()), Constants.stickDeadband);
         SmartDashboard.putNumber("translationVal", translationVal);
+        SmartDashboard.putNumber("gyro pitch", gyroPitch());
         SmartDashboard.updateValues();
         /* Drive */
 
@@ -94,7 +95,10 @@ public class TeleopSwerve extends CommandBase {
         return (s_Swerve.gyro.getAngle());
     }
     public void autoAlignRamp() {
-            
+        SmartDashboard.putBoolean("REACHED RAMP", true);
+
+        SmartDashboard.putNumber("KP Ramp", (5.35-gyroPitch()) * 0.02);
+        SmartDashboard.updateValues();
 
                 s_Swerve.drive(
                     new Translation2d((5.35-gyroPitch()) * 0.02, 0).times(Constants.Swerve.maxSpeed).times(0.5), 

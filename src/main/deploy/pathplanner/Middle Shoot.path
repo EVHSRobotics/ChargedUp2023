@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7156540295986575,
-        "y": 2.8091153618204667
+        "x": 1.7499115340111024,
+        "y": 2.7520195211330596
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2017914634119866,
-        "y": 2.8205345299579494
+        "x": 1.2360489678244315,
+        "y": 2.763438689270543
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -26,12 +26,12 @@
     },
     {
       "anchorPoint": {
-        "x": -1.0,
-        "y": 2.3180911319087607
+        "x": 1.75,
+        "y": 2.75
       },
       "prevControl": {
-        "x": -1.6763387335794695,
-        "y": 2.3180911319087607
+        "x": 2.0288818702020244,
+        "y": 2.743817380712833
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -40,9 +40,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Auto Align Ramp"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0

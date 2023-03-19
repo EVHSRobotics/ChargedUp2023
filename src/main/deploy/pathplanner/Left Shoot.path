@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.247468135961913,
-        "y": 4.442056405480335
+        "x": 1.2473412719762282,
+        "y": 4.430637237342851
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -26,16 +26,16 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7727498702860656,
-        "y": 3.2544629191822487
+        "x": 1.7841690384235482,
+        "y": 3.779744653506401
       },
       "prevControl": {
-        "x": 1.0964111367065992,
-        "y": 3.2544629191822487
+        "x": 1.5052186444309443,
+        "y": 3.779744653506401
       },
       "nextControl": {
-        "x": 2.4490886038655306,
-        "y": 3.2544629191822487
+        "x": 2.0631194324161513,
+        "y": 3.779744653506401
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -43,9 +43,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Auto Align Ramp"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -53,12 +51,12 @@
     },
     {
       "anchorPoint": {
-        "x": -0.5709584068740787,
-        "y": 3.2544629191822487
+        "x": -2.5,
+        "y": 3.78
       },
       "prevControl": {
-        "x": -0.8499088008666822,
-        "y": 3.2544629191822487
+        "x": -2.760984334939496,
+        "y": 3.78
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
