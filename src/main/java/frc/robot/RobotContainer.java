@@ -88,6 +88,7 @@ public class RobotContainer {
         autoChooser.addOption("Left Shoot", "Left Shoot");
         autoChooser.addOption("Middle Shoot", "Middle Shoot");
         autoChooser.addOption("Right Shoot", "Right Shoot");
+        autoChooser.addOption("2 Cube Balance 28 PT", "2 Cube Balance 28 PT");
 
         SmartDashboard.putData(autoChooser);
         SmartDashboard.updateValues();
@@ -151,7 +152,9 @@ public class RobotContainer {
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("Auto Align Ramp", new SwerveCommand(PathCommandAction.AUTOALIGNRAMP, fourBar, vision, s_Swerve));
-    eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, s_Swerve));
+    eventMap.put("Outtake High", new SwerveCommand(PathCommandAction.OUTTAKEHIGH, fourBar, vision, s_Swerve));
+    eventMap.put("Outtake Mid", new SwerveCommand(PathCommandAction.OUTTAKEMID, fourBar, vision, s_Swerve));
+    eventMap.put("Intake", new SwerveCommand(PathCommandAction.INTAKE, fourBar, vision, s_Swerve));
     // eventMap.put("Outake Cube 1", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Outake Cone 1", new SwerveCommand(PathCommandAction.OUTTAKECONE, fourBar, vision, teleopSwerve));
     // eventMap.put("Intake Cube 2", new SwerveCommand(PathCommandAction.INTAKECUBE, fourBar, vision, teleopSwerve));

@@ -73,7 +73,7 @@ List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(pathType.getPa
 // in your code that will be used by all path following commands.
 HashMap<String, Command> eventMap = new HashMap<>();
 eventMap.put("Auto Align Ramp", new SwerveCommand(PathCommandAction.AUTOALIGNRAMP, fourBar, vision, teleopSwerve));
-eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
+eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKEHIGH, fourBar, vision, teleopSwerve));
 // eventMap.put("Outake Cube 1", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
 // eventMap.put("Outake Cone 1", new SwerveCommand(PathCommandAction.OUTTAKECONE, fourBar, vision, teleopSwerve));
 // eventMap.put("Intake Cube 2", new SwerveCommand(PathCommandAction.INTAKECUBE, fourBar, vision, teleopSwerve));

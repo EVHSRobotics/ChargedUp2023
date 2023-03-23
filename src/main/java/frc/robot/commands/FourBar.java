@@ -44,16 +44,16 @@ public class FourBar extends CommandBase {
 
   private long currentIntakeTime = -1;
   private boolean cubeBooleanFlag = false;
-  private boolean deployIntake = false;
+  public boolean deployIntake = false;
   public boolean deployShoot = false;
   public GameObject gameObject = GameObject.CUBE;
-  double outtakePower = 1;
+  public double outtakePower = 1;
   public double shootArmTime = -1;
 
   private GenericEntry boardIntakeIn;
   private GenericEntry boardLowIntake;
   private GenericEntry boardShoot;
-  private IntakeType cIntakeType = IntakeType.LOW;
+  public IntakeType cIntakeType = IntakeType.LOW;
 
   // Different intake types
   // High - Human Player Station
@@ -380,6 +380,14 @@ public class FourBar extends CommandBase {
     SmartDashboard.putNumber("Bottom Arm", arm.getBottomArmPosition());
     SmartDashboard.updateValues();
 
+  }
+
+  public void intakeAuto() {
+    
+    if (intake.getIntakeCurrent() >= 22) {
+      deployIntake = false;
+    }
+      
   }
 
    // This is the shoot method which can be fed a bool at all times

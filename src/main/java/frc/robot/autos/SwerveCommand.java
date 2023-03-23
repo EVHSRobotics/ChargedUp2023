@@ -15,6 +15,7 @@ import frc.robot.Constants.Intake;
 import frc.robot.commands.FourBar;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Vision;
+import frc.robot.commands.FourBar.IntakeType;
 import frc.robot.subsystems.Arm.BottomArmPosition;
 import frc.robot.subsystems.Arm.TopArmPosition;
 import frc.robot.subsystems.Intake.GameObject;
@@ -26,11 +27,10 @@ public class SwerveCommand extends CommandBase {
   private FourBar fourBar;
   private Vision vision;
   private TeleopSwerve teleopSwerve;
-  private boolean isFinished = false;
   
   public static enum PathCommandAction {
       
-    INTAKECONE, INTAKECUBE, OUTTAKECONE, OUTTAKECUBE, AUTOALIGNRAMP;
+    INTAKE, OUTTAKEHIGH, OUTTAKEMID, AUTOALIGNRAMP;
 
 }
 
@@ -47,21 +47,30 @@ public class SwerveCommand extends CommandBase {
   @Override
   public void initialize() {
     switch (commandAction) {
-      case INTAKECONE:
-        // fourBar.activateCone();
-        break;
+    
       case AUTOALIGNRAMP:
         break;
-      case INTAKECUBE:
-      // fourBar.activateCube();
-        break;
-      case OUTTAKECONE:
-      // fourBar.activateCube();
+      case INTAKE:
+
+      fourBar.gameObject = GameObject.CUBE;
+      fourBar.outtakePower = 1.0;
+      fourBar.cIntakeType = IntakeType.LOW;
+      fourBar.deployIntake = true;
 
         break;
-      case OUTTAKECUBE:
+      case OUTTAKEMID:
       fourBar.gameObject = GameObject.CUBE;
-      // Straight
+      // Midddle
+      fourBar.tPositionScoring = TopArmPosition.MIDDLE;
+      fourBar.bPositionScoring = BottomArmPosition.IN;
+      fourBar.wPositionScoring = WristPosition.MIDDLE;
+      fourBar.shootArmTime = -1;
+      fourBar.deployShoot = true;
+        
+        break;
+      case OUTTAKEHIGH:
+      fourBar.gameObject = GameObject.CUBE;
+      // High
       fourBar.tPositionScoring = TopArmPosition.STRAIGHT;
       fourBar.bPositionScoring = BottomArmPosition.IN;
       fourBar.wPositionScoring = WristPosition.SHOOTING;
@@ -80,20 +89,17 @@ public class SwerveCommand extends CommandBase {
   public void execute() {
 
     switch (commandAction) {
-      case INTAKECONE:
-        // fourBar.activateCone();
-        break;
+     
       case AUTOALIGNRAMP:
         teleopSwerve.autoAlignRamp();
         break;
-      case INTAKECUBE:
-      // fourBar.activateCube();
+      case INTAKE:
+        fourBar.intakeAuto();
         break;
-      case OUTTAKECONE:
-      // fourBar.activateCube();
-
+      case OUTTAKEHIGH:
+      fourBar.shootAuto(fourBar.deployShoot);
         break;
-      case OUTTAKECUBE:
+      case OUTTAKEMID:
       
        fourBar.shootAuto(fourBar.deployShoot);
 
@@ -114,19 +120,14 @@ public class SwerveCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     switch (commandAction) {
-      case INTAKECONE:
-        // fourBar.activateCone();
-        return false;
+   
       case AUTOALIGNRAMP:
       return false;
-      case INTAKECUBE:
+      case INTAKE:
       // fourBar.activateCube();
-      return false;
-      case OUTTAKECONE:
-      // fourBar.activateCube();
-
-        return false;
-      case OUTTAKECUBE:
+      return !fourBar.deployIntake;
+      
+      case OUTTAKEHIGH:
       
       return !fourBar.deployShoot;
       default:

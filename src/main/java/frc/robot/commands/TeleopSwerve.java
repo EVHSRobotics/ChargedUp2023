@@ -59,10 +59,14 @@ public class TeleopSwerve extends CommandBase {
         SmartDashboard.updateValues();
         /* Drive */
 
+        if(swerveController.getLeftBumper()){
+            rotationVal = (180 - s_Swerve.gyro.getYaw())*0.01;
+        }
+
         s_Swerve.drive(
                 new Translation2d(-translationVal, -strafeVal).times(Constants.Swerve.maxSpeed), 
                 rotationVal * Constants.Swerve.maxAngularVelocity, 
-                false, 
+                true, 
                 true
             );
         
