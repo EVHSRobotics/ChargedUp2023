@@ -129,6 +129,10 @@ public class SwerveCommand extends CommandBase {
       return !fourBar.deployIntake;
       
       case OUTTAKEHIGH:
+      return !fourBar.deployShoot;
+
+      
+      case OUTTAKEMID:
       
       return !fourBar.deployShoot;
       default:

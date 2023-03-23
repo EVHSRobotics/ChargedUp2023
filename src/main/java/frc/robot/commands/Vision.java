@@ -151,10 +151,7 @@ addRequirements(gameObjectLimelight);
         0, MathUtil.applyDeadband(output, 0.05)).times(Constants.Swerve.maxSpeed).times(0.5),
         0, true, false);
   }
-  public void goright() {
-
-    // swerve.drive(new Translation2d(0.1), 0, isFinished(), isFinished());
-  }
+  
 
   // Called once the command ends or is interrupted.
   @Override
