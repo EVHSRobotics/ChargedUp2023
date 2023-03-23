@@ -55,11 +55,11 @@ public class TeleopSwerve extends CommandBase {
         double translationVal = MathUtil.applyDeadband(limiter[0].calculate(translationSup.getAsDouble()), Constants.stickDeadband);
         double strafeVal = MathUtil.applyDeadband(limiter[1].calculate(strafeSup.getAsDouble()), Constants.stickDeadband);
         double rotationVal = MathUtil.applyDeadband(limiter[2].calculate(rotationSup.getAsDouble()), Constants.stickDeadband);
-        SmartDashboard.putNumber("translationVal", translationVal);
-        SmartDashboard.putNumber("gyro pitch", gyroPitch());
-        SmartDashboard.updateValues();
+
+
         /* Drive */
 
+        // Turn left
         if(swerveController.getLeftBumper()){
             rotationVal = (180 - s_Swerve.gyro.getYaw())*0.01;
         }
@@ -101,12 +101,8 @@ public class TeleopSwerve extends CommandBase {
     }
 
     
+    // If this isn't working change field relative to false
     public void autoAlignRamp() {
-        SmartDashboard.putBoolean("REACHED RAMP", true);
-
-        SmartDashboard.putNumber("KP Ramp", (5.35-gyroPitch()) * 0.02);
-        SmartDashboard.updateValues();
-
                 s_Swerve.drive(
                     new Translation2d((5.35-gyroPitch()) * 0.02, 0).times(Constants.Swerve.maxSpeed).times(0.5), 
                     0 * Constants.Swerve.maxAngularVelocity, 

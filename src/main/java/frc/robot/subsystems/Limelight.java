@@ -32,7 +32,7 @@ public class Limelight extends SubsystemBase {
   public void periodic() {
 
     tx = table.getEntry("tx");
-    ty = table.getEntry("ty");
+    ty = table.getEntry("ty"); 
     tv = table.getEntry("tv");
     SmartDashboard.putNumber("tx", tx.getDouble(0));
     SmartDashboard.updateValues();

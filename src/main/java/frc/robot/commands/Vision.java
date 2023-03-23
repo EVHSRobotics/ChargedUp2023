@@ -85,11 +85,14 @@ addRequirements(gameObjectLimelight);
         double gameObjectDistance = gameObjectLimelight.calculateDistanceObject();
         // Max is 1.5 Meters to take affect
         if (gameObjectDistance <= 60) {
-          double kpVert = MathUtil.applyDeadband(gameObjectDistance * 0.02, 0.05);
-          double kpHori = MathUtil.applyDeadband(gameObjectLimelight.getX() * 0.02, 0.05);
+          double kpVert = MathUtil.applyDeadband(gameObjectDistance * 0.03, 0.05);
+          double kpHori = MathUtil.applyDeadband(gameObjectLimelight.getX() * 0.03, 0.05);
+          SmartDashboard.putNumber("KP Horizontal Object Detection", kpHori);
+          SmartDashboard.putNumber("KP Vertical Object Detection", kpVert);
+          SmartDashboard.updateValues();
             // 1.5 meters
             swerve.drive(
-            new Translation2d(kpVert, kpHori).times(Constants.Swerve.maxSpeed).times(0.5), 
+            new Translation2d(kpVert, kpHori).times(Constants.Swerve.maxSpeed).times(0.75), 
             0 * Constants.Swerve.maxAngularVelocity, 
             true, 
             true
