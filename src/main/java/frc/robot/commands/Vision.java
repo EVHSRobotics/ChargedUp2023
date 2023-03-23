@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VideoServer;
@@ -26,15 +28,16 @@ public class Vision extends CommandBase {
   private Limelight reflectiveLimelight;
   private Swerve swerve;
   private XboxController xboxController;
+  private Limelight gameObjectLimelight;
+  private Intake intake;
 
-  private FourBar fourBar;
   double errorsum = 0;
   double lasterror = 0;
   double error;
   double lastTimestamp = 0;
 
   /** Creates a new Vision. */
-  public Vision(Swerve swerve, Limelight aprilLimelight, FourBar fourBar, Limelight reflectiveLimelight,  VideoServer videoServer, XboxController xboxController) {
+  public Vision(Swerve swerve, Limelight aprilLimelight, Limelight reflectiveLimelight, Limelight gameObjectLimelight, Intake intake, VideoServer videoServer, XboxController xboxController) {
     // Use addRequirements() here to declare subsystem dependencies.
     // VideoServer videoServer, AprilScanner aprilScanner,
     this.videoServer = videoServer;
@@ -42,14 +45,14 @@ public class Vision extends CommandBase {
     this.aprilLimelight = aprilLimelight;
     this.reflectiveLimelight = reflectiveLimelight;
     this.swerve = swerve;
-this.fourBar = fourBar;
     this.xboxController = xboxController;
-
+    this.gameObjectLimelight = gameObjectLimelight;
+this.intake = intake;
     // addRequirements(videoServer);
     // addRequirements(aprilScanner);
     addRequirements(aprilLimelight);
     addRequirements(reflectiveLimelight);
-
+addRequirements(gameObjectLimelight);
   }
 
   // Called when the command is initially scheduled.
@@ -65,11 +68,11 @@ this.fourBar = fourBar;
     if (xboxController.getAButton()) {
 
 
-      if (fourBar.gameObject == GameObject.CUBE) {
+      if (intake.gameObject == GameObject.CUBE) {
 
         aimLimelightAprilTags();
       }
-      else if (fourBar.gameObject == GameObject.CONE) {
+      else if (intake.gameObject == GameObject.CONE) {
         aimLimelightReflective();
       }
       
@@ -77,6 +80,32 @@ this.fourBar = fourBar;
    
   }
 
+  public boolean aimLimelightGameObjectPickup() {
+      
+        double gameObjectDistance = gameObjectLimelight.calculateDistanceObject();
+        // Max is 1.5 Meters to take affect
+        if (gameObjectDistance <= 60) {
+          double kpVert = MathUtil.applyDeadband(gameObjectDistance * 0.02, 0.05);
+          double kpHori = MathUtil.applyDeadband(gameObjectLimelight.getX() * 0.02, 0.05);
+            // 1.5 meters
+            swerve.drive(
+            new Translation2d(kpVert, kpHori).times(Constants.Swerve.maxSpeed).times(0.5), 
+            0 * Constants.Swerve.maxAngularVelocity, 
+            true, 
+            true
+        );
+        if (kpVert <= 0.03 && kpHori <= 0.03) {
+          return true;
+        }
+        else {
+          return false;
+        }
+
+        
+        }
+        
+      return true;
+    }
   public void aimLimelightReflective() {
 
     double x = reflectiveLimelight.getX();
@@ -97,7 +126,7 @@ this.fourBar = fourBar;
     
     swerve.drive(new Translation2d(
         0, MathUtil.applyDeadband(output, 0.05)).times(Constants.Swerve.maxSpeed).times(0.5),
-        0, false, false);
+        0, true, false);
   }
 
   public void aimLimelightAprilTags() {
@@ -120,7 +149,7 @@ this.fourBar = fourBar;
     
     swerve.drive(new Translation2d(
         0, MathUtil.applyDeadband(output, 0.05)).times(Constants.Swerve.maxSpeed).times(0.5),
-        0, false, false);
+        0, true, false);
   }
   public void goright() {
 
