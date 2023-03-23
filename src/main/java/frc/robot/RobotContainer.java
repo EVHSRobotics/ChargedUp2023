@@ -58,6 +58,8 @@ public class RobotContainer {
     private final VideoServer videoServer;
     private final Limelight aprilLimelight;
     private final Limelight reflectiveLimelight;
+    private final Limelight gameObjectLimelight;
+
     private final Arm arm;
     private final Wrist wrist;
     private final Intake intake;
@@ -70,8 +72,9 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         swerve = new Swerve();
-        aprilLimelight = new Limelight(1);
-        reflectiveLimelight = new Limelight(0);
+        reflectiveLimelight = new Limelight(0, "limelight-top");
+        aprilLimelight = new Limelight(1, "limelight-top");
+        gameObjectLimelight = new Limelight(2, "limelight-bottom");
         arm = new Arm();
         intake = new Intake();
 
@@ -103,9 +106,9 @@ public class RobotContainer {
                 () -> robotCentric.getAsBoolean(),
                 driveController
             );
-
-        fourBar = new FourBar(arm, wrist, intake, operatorController, driveController);
-        vision = new Vision(swerve, aprilLimelight, fourBar, reflectiveLimelight, videoServer, driveController);
+        
+        vision = new Vision(swerve, aprilLimelight, reflectiveLimelight, gameObjectLimelight, intake, videoServer, driveController);
+        fourBar = new FourBar(arm, wrist, intake, vision, operatorController, driveController);
 
         // Configure the button bindings
         configureButtonBindings();

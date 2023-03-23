@@ -12,14 +12,17 @@ public class Limelight extends SubsystemBase {
 
   private NetworkTable table;
   private NetworkTableEntry tx;
-
+  private NetworkTableEntry ty;
   private NetworkTableEntry tv;
   private int pipeline;
 
+  private double mountAngle = 45; // Degrees
+  private double lensHeight = 20; // Inches
+  // Target Height
+
   /** Creates a new Limelight. */
-  public Limelight(int pipeline) {
-    table = NetworkTableInstance.getDefault().getTable("limelight");
-    
+  public Limelight(int pipeline, String tableName) {
+    table = NetworkTableInstance.getDefault().getTable(tableName);
     this.pipeline = pipeline;
     table.getEntry("pipeline").setNumber(this.pipeline);
 
@@ -27,12 +30,24 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     tx = table.getEntry("tx");
+    ty = table.getEntry("ty");
     tv = table.getEntry("tv");
     SmartDashboard.putNumber("tx", tx.getDouble(0));
     SmartDashboard.updateValues();
+
   }
   
+  // Uses tangent to get distance based on angle of tilt from vertical
+  public double calculateDistanceObject() {
+    double totalAngleDeg = mountAngle + getY();
+    // convert to radians
+    double totalAngleRads = totalAngleDeg * (Math.PI/180);
+
+    return -lensHeight/Math.tan(totalAngleRads);
+  }
+
   // gets the error of the limelight to the detected object
   public double getX() {
     double x = tx.getDouble(0.0);
@@ -40,8 +55,16 @@ public class Limelight extends SubsystemBase {
     if (tv.getBoolean(false)) {
       x = 0;
     }
-    return x ;   
+    return x;   
   }
 
-  
+  // gets the error of the limelight to the detected object
+  public double getY() {
+    double y = ty.getDouble(0.0);
+   
+    if (tv.getBoolean(false)) {
+      y = 0;
+    }
+    return y;   
+  }
 }

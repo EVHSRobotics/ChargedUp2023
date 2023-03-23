@@ -52,14 +52,15 @@ public class SwerveCommand extends CommandBase {
         break;
       case INTAKE:
 
-      fourBar.gameObject = GameObject.CUBE;
+      fourBar.setIntakeGameObject(GameObject.CUBE);
       fourBar.outtakePower = 1.0;
       fourBar.cIntakeType = IntakeType.LOW;
       fourBar.deployIntake = true;
 
         break;
       case OUTTAKEMID:
-      fourBar.gameObject = GameObject.CUBE;
+      fourBar.setIntakeGameObject(GameObject.CUBE);
+
       // Midddle
       fourBar.tPositionScoring = TopArmPosition.MIDDLE;
       fourBar.bPositionScoring = BottomArmPosition.IN;
@@ -69,7 +70,7 @@ public class SwerveCommand extends CommandBase {
         
         break;
       case OUTTAKEHIGH:
-      fourBar.gameObject = GameObject.CUBE;
+      fourBar.setIntakeGameObject(GameObject.CUBE);
       // High
       fourBar.tPositionScoring = TopArmPosition.STRAIGHT;
       fourBar.bPositionScoring = BottomArmPosition.IN;

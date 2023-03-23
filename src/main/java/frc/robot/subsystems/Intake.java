@@ -42,7 +42,8 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  
+  public GameObject gameObject = GameObject.CUBE;
+
   private TalonSRX intakeMotor;
 
   private DigitalInput bannerIntake;

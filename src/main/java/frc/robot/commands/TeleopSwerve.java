@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
 
 import java.util.function.BooleanSupplier;
@@ -98,6 +99,8 @@ public class TeleopSwerve extends CommandBase {
     public double gyroYaw() {
         return (s_Swerve.gyro.getAngle());
     }
+
+    
     public void autoAlignRamp() {
         SmartDashboard.putBoolean("REACHED RAMP", true);
 
@@ -107,7 +110,7 @@ public class TeleopSwerve extends CommandBase {
                 s_Swerve.drive(
                     new Translation2d((5.35-gyroPitch()) * 0.02, 0).times(Constants.Swerve.maxSpeed).times(0.5), 
                     0 * Constants.Swerve.maxAngularVelocity, 
-                    false, 
+                    true, 
                     true
                 );
             

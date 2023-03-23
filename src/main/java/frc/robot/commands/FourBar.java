@@ -46,13 +46,13 @@ public class FourBar extends CommandBase {
   private boolean cubeBooleanFlag = false;
   public boolean deployIntake = false;
   public boolean deployShoot = false;
-  public GameObject gameObject = GameObject.CUBE;
   public double outtakePower = 1;
   public double shootArmTime = -1;
 
   private GenericEntry boardIntakeIn;
   private GenericEntry boardLowIntake;
   private GenericEntry boardShoot;
+  private Vision vision;
   public IntakeType cIntakeType = IntakeType.LOW;
 
   // Different intake types
@@ -64,14 +64,14 @@ public class FourBar extends CommandBase {
   }
 
   /** Creates a new Claw. */
-  public FourBar(Arm arm, Wrist wrist, Intake intake, XboxController controller, XboxController driveController) {
+  public FourBar(Arm arm, Wrist wrist, Intake intake, Vision vision, XboxController controller, XboxController driveController) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.wrist = wrist;
     this.arm = arm;
     this.intake = intake;
     this.xboxController = controller;
     this.driveController = driveController;
-
+this.vision = vision;
     addRequirements(wrist);
     addRequirements(arm);
     addRequirements(intake);
@@ -82,6 +82,9 @@ public class FourBar extends CommandBase {
 
   }
 
+  public void setIntakeGameObject(GameObject gameObject) {
+    intake.gameObject = gameObject;
+  }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -129,7 +132,7 @@ public class FourBar extends CommandBase {
           deployShoot = false;
         }
         else {
-          intake.runIntake(gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
+          intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
 
         } 
       }
@@ -140,7 +143,7 @@ public class FourBar extends CommandBase {
       } else if (System.currentTimeMillis() - shootArmTime >= 5000) {
         wrist.setWristPosition(WristPosition.UP);
       } else if (System.currentTimeMillis() - shootArmTime >= 3000) {
-        intake.runIntake(gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
+        intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
         arm.setLED(SparkLEDColors.SHOOT);
       } else if (System.currentTimeMillis() - shootArmTime >= 700) {
         wrist.setWristPosition(wPositionScoring);
@@ -150,6 +153,7 @@ public class FourBar extends CommandBase {
     }
 
   }
+
 
   // This is the intake method which can keep taking in a boolean which decides if it runs
   public void intakeAction(boolean action) {
@@ -163,14 +167,14 @@ public class FourBar extends CommandBase {
           wrist.setWristPosition(WristPosition.HIGHINTAKE);
  // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-          intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
+          intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
      
         }
         
        
         
         // Set the LEDS based on what game object we are intaking
-        if (gameObject == GameObject.CUBE) {
+        if (intake.gameObject == GameObject.CUBE) {
           // Cube
           arm.setLED(SparkLEDColors.PURPLE);
         } else {
@@ -185,8 +189,11 @@ public class FourBar extends CommandBase {
     else if (cIntakeType == IntakeType.LOW) {
       
       if (action) {
+        if (vision.aimLimelightGameObjectPickup()) {
+
+        
         // If the game object is a cone vs a cube we set different wrist positions and led colors
-        if (gameObject == GameObject.CONE) {
+        if (intake.gameObject == GameObject.CONE) {
           wrist.setWristPosition(WristPosition.STRAIGHTCONE);
           arm.setLED(SparkLEDColors.PURPLE);
 
@@ -198,8 +205,8 @@ public class FourBar extends CommandBase {
 
         // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-          intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
-      
+          intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
+      }
       }
       }
       // This is for the ground intake, which would be used to intake
@@ -220,7 +227,7 @@ public class FourBar extends CommandBase {
             wrist.setWristPosition(WristPosition.GROUNDCONE);
             // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
-              intake.runIntake(gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
+              intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
               // Once intaked, we can move the intkae back up
           
           }
@@ -255,33 +262,33 @@ public class FourBar extends CommandBase {
 
     // All of the button controls with setting values
     if (xboxController.getYButtonPressed()) {
-      gameObject = GameObject.CONE;
+      intake.gameObject = GameObject.CONE;
       outtakePower = 1.0;
       cIntakeType = IntakeType.LOW;
       deployIntake = !deployIntake;
     }
 
     if (xboxController.getXButtonPressed()) {
-      gameObject = GameObject.CUBE;
+      intake.gameObject = GameObject.CUBE;
       outtakePower = 1.0;
       cIntakeType = IntakeType.LOW;
       deployIntake = !deployIntake;
     }
 
     if (xboxController.getBButtonPressed()) {
-      gameObject = GameObject.CONE;
+      intake.gameObject = GameObject.CONE;
       outtakePower = 1.0;
       cIntakeType = IntakeType.GROUND;
       deployIntake = !deployIntake;
     }
     if (xboxController.getLeftBumperPressed()) {
-      gameObject = GameObject.CUBE;
+      intake.gameObject = GameObject.CUBE;
       outtakePower = 1.0;
       cIntakeType = IntakeType.HIGH;
       deployIntake = !deployIntake;
     }
     if (xboxController.getRightBumperPressed()) {
-      gameObject = GameObject.CONE;
+      intake.gameObject = GameObject.CONE;
       outtakePower = 1.0;
       cIntakeType = IntakeType.HIGH;
       deployIntake = !deployIntake;
@@ -427,7 +434,7 @@ public class FourBar extends CommandBase {
         intake.runIntake(0);
         wrist.setWristPosition(WristPosition.UP);
       } else if (System.currentTimeMillis() - shootArmTime >= 2000) {
-        intake.runIntake(gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
+        intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
         arm.setLED(SparkLEDColors.SHOOT);
       } else if (System.currentTimeMillis() - shootArmTime >= 700) {
         wrist.setWristPosition(wPositionScoring);
