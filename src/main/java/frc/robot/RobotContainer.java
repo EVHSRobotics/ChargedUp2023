@@ -56,7 +56,8 @@ public class RobotContainer {
     /* Subsystem */
     private final Swerve swerve;
     private final VideoServer videoServer;
-    private final Limelight limelight;
+    private final Limelight aprilLimelight;
+    private final Limelight reflectiveLimelight;
     private final Arm arm;
     private final Wrist wrist;
     private final Intake intake;
@@ -69,7 +70,8 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         swerve = new Swerve();
-        limelight = new Limelight();
+        aprilLimelight = new Limelight(1);
+        reflectiveLimelight = new Limelight(0);
         arm = new Arm();
         intake = new Intake();
 
@@ -103,7 +105,7 @@ public class RobotContainer {
             );
 
         fourBar = new FourBar(arm, wrist, intake, operatorController, driveController);
-        vision = new Vision(swerve, limelight, videoServer, driveController);
+        vision = new Vision(swerve, aprilLimelight, fourBar, reflectiveLimelight, videoServer, driveController);
 
         // Configure the button bindings
         configureButtonBindings();

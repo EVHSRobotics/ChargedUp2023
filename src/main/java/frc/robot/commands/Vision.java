@@ -16,34 +16,39 @@ import frc.robot.SwerveModule;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VideoServer;
+import frc.robot.subsystems.Intake.GameObject;
 
 public class Vision extends CommandBase {
 
   private VideoServer videoServer;
   // private AprilScanner aprilScanner;
-  private Limelight limelight;
+  private Limelight aprilLimelight;
+  private Limelight reflectiveLimelight;
   private Swerve swerve;
   private XboxController xboxController;
 
+  private FourBar fourBar;
   double errorsum = 0;
   double lasterror = 0;
   double error;
   double lastTimestamp = 0;
 
   /** Creates a new Vision. */
-  public Vision(Swerve swerve, Limelight limelight, VideoServer videoServer, XboxController xboxController) {
+  public Vision(Swerve swerve, Limelight aprilLimelight, FourBar fourBar, Limelight reflectiveLimelight,  VideoServer videoServer, XboxController xboxController) {
     // Use addRequirements() here to declare subsystem dependencies.
     // VideoServer videoServer, AprilScanner aprilScanner,
     this.videoServer = videoServer;
     // this.aprilScanner = aprilScanner;
-    this.limelight = limelight;
+    this.aprilLimelight = aprilLimelight;
+    this.reflectiveLimelight = reflectiveLimelight;
     this.swerve = swerve;
-
+this.fourBar = fourBar;
     this.xboxController = xboxController;
 
     // addRequirements(videoServer);
     // addRequirements(aprilScanner);
-    addRequirements(limelight);
+    addRequirements(aprilLimelight);
+    addRequirements(reflectiveLimelight);
 
   }
 
@@ -59,14 +64,22 @@ public class Vision extends CommandBase {
     // aprilScanner.detectAprilCode();
     if (xboxController.getAButton()) {
 
-      aimLimelight();
+
+      if (fourBar.gameObject == GameObject.CUBE) {
+
+        aimLimelightAprilTags();
+      }
+      else if (fourBar.gameObject == GameObject.CONE) {
+        aimLimelightReflective();
+      }
+      
     }
    
   }
 
-  public void aimLimelight() {
+  public void aimLimelightReflective() {
 
-    double x = limelight.getX();
+    double x = reflectiveLimelight.getX();
     errorsum = 0;
     error = x;
 
@@ -87,6 +100,28 @@ public class Vision extends CommandBase {
         0, false, false);
   }
 
+  public void aimLimelightAprilTags() {
+
+    double x = aprilLimelight.getX();
+    errorsum = 0;
+    error = x;
+
+    double dt = Timer.getFPGATimestamp() - lastTimestamp;
+    double errorrate = (error-lasterror)/dt;
+    if(Math.abs(x) < 0.1){
+        errorsum += dt *  x;
+    }
+    double output = MathUtil.clamp(error*0.045 + errorrate *0+errorsum*0.0, -1, 1);
+
+    SmartDashboard.putNumber("limelight", ( output));
+    SmartDashboard.updateValues();
+    lastTimestamp = Timer.getFPGATimestamp();
+    lasterror = error;
+    
+    swerve.drive(new Translation2d(
+        0, MathUtil.applyDeadband(output, 0.05)).times(Constants.Swerve.maxSpeed).times(0.5),
+        0, false, false);
+  }
   public void goright() {
 
     // swerve.drive(new Translation2d(0.1), 0, isFinished(), isFinished());

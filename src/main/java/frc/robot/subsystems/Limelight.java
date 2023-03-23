@@ -14,11 +14,14 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry tx;
 
   private NetworkTableEntry tv;
+  private int pipeline;
 
   /** Creates a new Limelight. */
-  public Limelight() {
+  public Limelight(int pipeline) {
     table = NetworkTableInstance.getDefault().getTable("limelight");
     
+    this.pipeline = pipeline;
+    table.getEntry("pipeline").setNumber(this.pipeline);
 
   }
 
