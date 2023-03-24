@@ -74,7 +74,7 @@ public class RobotContainer {
         swerve = new Swerve();
         reflectiveLimelight = new Limelight(0, "limelight-top");
         aprilLimelight = new Limelight(1, "limelight-top");
-        gameObjectLimelight = new Limelight(2, "limelight-bottom");
+        gameObjectLimelight = new Limelight(0, "limelight-bottom");
         arm = new Arm();
         intake = new Intake();
 
