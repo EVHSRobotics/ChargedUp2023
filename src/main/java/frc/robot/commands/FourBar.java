@@ -189,7 +189,7 @@ this.vision = vision;
     else if (cIntakeType == IntakeType.LOW) {
       
       if (action) {
-        if (vision.aimLimelightGameObjectPickup()) {
+        // if (vision.aimLimelightGameObjectPickup(intake.gameObject)) {
 
         
         // If the game object is a cone vs a cube we set different wrist positions and led colors
@@ -206,35 +206,11 @@ this.vision = vision;
         // If the motor is stalling the intake current goes around 24, so
         // the intake runs till it stalls and then we just put the intake back up
           intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
-      }
+      // }
       }
       }
       // This is for the ground intake, which would be used to intake
       // a cone that was flipped
-       else {
-        // ground intake
-        if (action) {
-        
-          // If the kp is deadbanded to 0.05, once the top arm output is 0, 
-          // I can swing the wrist down, which would intake the fallen down cone
-          double pid = arm.setTopPosition(TopArmPosition.GROUNDMIDDLE);
-          SmartDashboard.putNumber("jiefj", pid);
-          SmartDashboard.updateValues();
-          if (Math.abs(arm.setTopPosition(TopArmPosition.GROUNDMIDDLE)) <= 0.1) {
-            // Runs the intake for the cone
-            intake.runIntake(outtakePower);
-            // Move wrist for the ground cone position
-            wrist.setWristPosition(WristPosition.GROUNDCONE);
-            // If the motor is stalling the intake current goes around 24, so
-        // the intake runs till it stalls and then we just put the intake back up
-              intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
-              // Once intaked, we can move the intkae back up
-          
-          }
-
-        }
-      
-    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -243,7 +219,7 @@ this.vision = vision;
   public void execute() {
     
     //add wrist offset for cycles 
-    wrist.checkCycle();
+    // wrist.checkCycle();
 
 
     // if(driveController.getYButtonPressed()){
@@ -275,6 +251,12 @@ this.vision = vision;
 
     if (xboxController.getXButtonPressed()) {
       intake.gameObject = GameObject.CUBE;
+      outtakePower = 1.0;
+      cIntakeType = IntakeType.LOW;
+      deployIntake = !deployIntake;
+    }
+    if (xboxController.getAButtonPressed()) {
+      intake.gameObject = vision.getCurrentDetectedGameObject();
       outtakePower = 1.0;
       cIntakeType = IntakeType.LOW;
       deployIntake = !deployIntake;

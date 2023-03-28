@@ -27,11 +27,15 @@ public class Wrist extends SubsystemBase {
   private double encoderOff = 0;
 
   public enum WristPosition{
-
-    UP(-5000), MIDDLE(-100000), SHOOTING(-245100), HIGHINTAKE(-250100), STRAIGHT(-150100), STRAIGHTCUBE(-180100), STRAIGHTCONE(-190100), GROUNDCONE(-250000);
+    //318.955 = cube ground pickup, cone ground pickup
+    //151.328125 = high cone
+    UP(60.55), MIDDLE(155.5), SHOOTING(255), HIGHINTAKE(130), STRAIGHTCUBE(354.408203), STRAIGHTCONE(354.408203);
     
  
-     public double wristSensorPosition;  
+     private double wristSensorPosition;  
+     public double getWrist() {
+      return convertWristEncoder(wristSensorPosition);
+     }
      private WristPosition(double wristSensorPosition) {
        this.wristSensorPosition = wristSensorPosition;
      }
@@ -51,6 +55,7 @@ public class Wrist extends SubsystemBase {
     // private final double gearratio = 0;
     // private final double kp = 0.001;
     private double lastWristPos = 0;
+    private static double wristOffset = 325;
     double errorsum = 0;
     double lasterror = 0;
     double error;
@@ -91,17 +96,21 @@ public class Wrist extends SubsystemBase {
 
     // gets the wrist position
     public double getWristMotorPosition() {
-      return wristCAN.getAbsolutePosition() + encoderOff;
+      return convertWristEncoder(wristCAN.getAbsolutePosition());
     }
 
-    public void checkCycle(){
-      if(getWristMotorPosition() < 10 && lastWristPos > 350){
-        encoderOff += 360;
-      }
-      if(getWristMotorPosition() > 350 && lastWristPos < 10){
-        encoderOff -= 360;
-      }
+    private static double convertWristEncoder(double val){
+      return (360.0 - (val - wristOffset)) % 360.0;
     }
+
+    // public void checkCycle(){
+    //   if(getWristMotorPosition() < 10 && lastWristPos > 350){
+    //     encoderOff += 360;
+    //   }
+    //   if(getWristMotorPosition() > 350 && lastWristPos < 10){
+    //     encoderOff -= 360;
+    //   }
+    // }
 
     // public void parallelWrist(double topEncoder, double bottomEncoder){
     //     double wristangle = 180 - (topStartAngle + (topEncoder/topArmEncodertickstoangle) + baseStartAngle - (bottomEncoder/bottomArmEncodertickstoangle));
@@ -122,18 +131,21 @@ public class Wrist extends SubsystemBase {
     // error is difference between expected vs current wrist position
     // p value for wrist with mag encoder should be 0.0016, integrator range 200
     public double setWristPosition(WristPosition wPosition) {
+      error = convertWristEncoder(wPosition.wristSensorPosition) - getWristMotorPosition();
 
-      error = wPosition.wristSensorPosition - getWristMotorPosition();
-
+      SmartDashboard.putNumber("wrist encoder", wristCAN.getAbsolutePosition());
+      SmartDashboard.putNumber("wrist en errorcoder", error);
+      SmartDashboard.updateValues();
       double dt = Timer.getFPGATimestamp() - lastTimestamp;
       double errorrate = (error-lasterror)/dt;
       if(Math.abs(lastWristPos - getWristMotorPosition()) < 15){
           errorsum += dt * (lastWristPos - getWristMotorPosition());
       }
-      double output = MathUtil.clamp(error*0.01 + errorrate*0.0 + errorsum*0.0, -1, 1);
+      double output = MathUtil.clamp(error*0.001 + errorrate*0.0 + errorsum*0.0, -1, 1);
       double lowerLimit = -2;
-      if(wrist.getSelectedSensorPosition() < lowerLimit && output < 0) output = 0;
-      wrist.set(ControlMode.PercentOutput, output);
+      SmartDashboard.putNumber("updateeeeee", wPosition.wristSensorPosition);
+      // if(wrist.getSelectedSensorPosition() < lowerLimit && output < 0) output = 0;
+      // wrist.set(ControlMode.PercentOutput, -output);
       lastTimestamp = Timer.getFPGATimestamp();
       lasterror = error;
       lastWristPos = getWristMotorPosition();

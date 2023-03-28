@@ -75,28 +75,25 @@ public enum SparkLEDColors {
    // CAN values based of high intake being ~ 80 degrees up from original position, must be retuned
   public enum TopArmPosition {
 
-    DOWN(0.43), MIDDLE(25.67), GROUNDMIDDLE(53.48), STRAIGHT(88.77), HIGHINTAKE(80
+    DOWN(242.209), MIDDLE(223.32), STRAIGHT(177.348), HIGHINTAKE(177.229);
     
     
-    
-    
-    
-    
-    
-    
-    
-    );
- 
+     
      private double tArmSensorPosition;
      
      public double getPos() {
-      return tArmSensorPosition;
+      return Arm.convertArmEncoder(tArmSensorPosition);
      }
      private TopArmPosition(double tArmSensorPosition) {
        this.tArmSensorPosition = tArmSensorPosition;
      }
-   }
+    
+    
+  
+  }
 
+
+  private static double armOffset = 314.209;
 
 
   // enum values for ctre mag encoder
@@ -110,7 +107,7 @@ public enum SparkLEDColors {
   //    public double getPos() {
   //     return tArmSensorPosition;
   //    }
-  //    private TopArmPosition(double tArmSensorPosition) {
+  //    private TopArmPosition(double t ArmSensorPosition) {
   //      this.tArmSensorPosition = tArmSensorPosition;
   //    }
   //  }
@@ -166,7 +163,8 @@ public enum SparkLEDColors {
   }
 
   public double getTopArmPosition() {
-    return armCAN.getAbsolutePosition();
+    
+    return convertArmEncoder(armCAN.getAbsolutePosition());
   }
   // public double getBottomArmPosition() {
   //   return bottomArm.getSelectedSensorPosition();
@@ -219,16 +217,18 @@ public enum SparkLEDColors {
  
   // }
 
-
+  private static double convertArmEncoder(double val){
+    return (360 - (val - armOffset)) % 360.0;
+  }
   // for ctre mag encoder have to change pid values as well if we have to but hopefully not
   // p value for mag encdeor proportionally should be 0.0012, integrator range 25
   // 0.000004 p value prev
   public double setTopPosition(TopArmPosition tPosition){
-    SmartDashboard.putNumber("top pos PID", MathUtil.applyDeadband((tPosition.getPos() - getTopArmPosition()) * 0.000003, 0.01));
+    SmartDashboard.putNumber("CANCODER VALUE", armCAN.getAbsolutePosition());
+    SmartDashboard.putNumber("CANCODER VALUE MODIFIED", getTopArmPosition());
     SmartDashboard.updateValues();
     
-    
-    tError = tPosition.getPos() - getTopArmPosition();
+    tError = convertArmEncoder(tPosition.tArmSensorPosition) - getTopArmPosition();
 
     double dt = Timer.getFPGATimestamp() - lastTimestamp;
     double errorrate = (tError-tLastError)/dt;
@@ -236,8 +236,8 @@ public enum SparkLEDColors {
         tErrorSum += dt * tError;
         //00000001
     }
-    double output = MathUtil.clamp(tError*0.01 + errorrate *0.0+tErrorSum*0.0, -1, 1);
-
+    double output = MathUtil.clamp(tError*0.04   + errorrate *0+tErrorSum*0.0, -1, 1);
+    SmartDashboard.putNumber("TARGET TOP VALUE", Arm.convertArmEncoder(tPosition.tArmSensorPosition));
     SmartDashboard.putNumber("Top PID Output", ( output));
     SmartDashboard.updateValues();
     lastTimestamp = Timer.getFPGATimestamp();

@@ -66,38 +66,45 @@ addRequirements(gameObjectLimelight);
   public void execute() {
     // aprilScanner.detectAprilCode();
     if (xboxController.getAButton()) {
+    
+      aimLimelightGameObjectPickup(gameObjectLimelight.getGameObject());
 
 
-      if (intake.gameObject == GameObject.CUBE) {
 
-        aimLimelightAprilTags();
-      }
-      else if (intake.gameObject == GameObject.CONE) {
-        aimLimelightReflective();
-      }
+      // if (intake.gameObject == GameObject.CUBE) {
+
+      //   aimLimelightAprilTags();
+      // }
+      // else if (intake.gameObject == GameObject.CONE) {
+      //   aimLimelightReflective();
+      // }
       
     }
    
   }
 
-  public boolean aimLimelightGameObjectPickup() {
+  public boolean aimLimelightGameObjectPickup(GameObject gameObject) {
       
-        double gameObjectDistance = gameObjectLimelight.calculateDistanceObject();
+    if (!gameObjectLimelight.getObjectSeen()) { return true; }
+        double gameObjectArea = gameObjectLimelight.getArea();
+        
+        
+        SmartDashboard.putNumber("KP Horizontal Object Detection", gameObjectArea);
+        SmartDashboard.putBoolean("Game Object", gameObject == GameObject.CUBE);
+SmartDashboard.updateValues();
         // Max is 1.5 Meters to take affect
-        if (gameObjectDistance <= 60) {
-          double kpVert = MathUtil.applyDeadband(gameObjectDistance * 0.03, 0.05);
-          double kpHori = MathUtil.applyDeadband(gameObjectLimelight.getX() * 0.03, 0.05);
-          SmartDashboard.putNumber("KP Horizontal Object Detection", kpHori);
+          double kpVert = MathUtil.applyDeadband((((gameObject == GameObject.CUBE) ? 1 : 25) -gameObjectArea) * 0.03, 0.02);
+          double kpHori = MathUtil.applyDeadband(gameObjectLimelight.getX() * 0.03, 0.02);
           SmartDashboard.putNumber("KP Vertical Object Detection", kpVert);
           SmartDashboard.updateValues();
             // 1.5 meters
             swerve.drive(
-            new Translation2d(kpVert, kpHori).times(Constants.Swerve.maxSpeed).times(0.75), 
+            new Translation2d(-kpVert, kpHori).times(Constants.Swerve.maxSpeed).times(0.75), 
             0 * Constants.Swerve.maxAngularVelocity, 
             true, 
             true
         );
-        if (kpVert <= 0.03 && kpHori <= 0.03) {
+        if (kpVert <= 0.02 && kpHori <= 0.02) {
           return true;
         }
         else {
@@ -105,9 +112,12 @@ addRequirements(gameObjectLimelight);
         }
 
         
-        }
         
-      return true;
+        
+    }
+
+    public GameObject getCurrentDetectedGameObject() {
+return gameObjectLimelight.getGameObject();
     }
   public void aimLimelightReflective() {
 

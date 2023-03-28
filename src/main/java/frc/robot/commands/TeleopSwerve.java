@@ -30,6 +30,8 @@ public class TeleopSwerve extends CommandBase {
     private GenericEntry driveSpeedEntry;
     private GenericEntry rotationalSpeedEntry;
     private GenericEntry autoAlignRampEntry;
+    private final double degtolerance = 2;
+
 
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, XboxController swerveController) {
         this.s_Swerve = s_Swerve;
@@ -60,14 +62,33 @@ public class TeleopSwerve extends CommandBase {
         /* Drive */
 
         // Turn left
-        if(swerveController.getLeftBumper()){
-            rotationVal = (180 - s_Swerve.gyro.getYaw())*0.01;
+        // s_Swerve.gyro.reset();
+        if(swerveController.getLeftBumper() ){
+            if(s_Swerve.gyro.getCompassHeading() > 180){
+                rotationVal = (180-s_Swerve.gyro.getCompassHeading())*0.01;
+            }
+            if(s_Swerve.gyro.getCompassHeading() < 180){
+                rotationVal = -(180-s_Swerve.gyro.getCompassHeading())*0.01;
+            }
+            rotationVal = (180 - s_Swerve.gyro.getCompassHeading())*0.01;
         }
 
+        if(swerveController.getRightBumper()){
+            if(s_Swerve.gyro.getCompassHeading() > 180){
+                rotationVal = -(s_Swerve.gyro.getCompassHeading())*0.01;
+            }
+            if(s_Swerve.gyro.getCompassHeading() < 180){
+                rotationVal = (s_Swerve.gyro.getCompassHeading())*0.01;
+            }
+        }
+
+        SmartDashboard.putNumber("Yaw", s_Swerve.gyro.getYaw());
+        SmartDashboard.updateValues();  
+    
         s_Swerve.drive(
-                new Translation2d(-translationVal, -strafeVal).times(Constants.Swerve.maxSpeed), 
+                new Translation2d(-translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
                 rotationVal * Constants.Swerve.maxAngularVelocity, 
-                true, 
+                false, 
                 true
             );
         

@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Intake.GameObject;
 
 public class Limelight extends SubsystemBase {
 
@@ -14,10 +15,12 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry tx;
   private NetworkTableEntry ty;
   private NetworkTableEntry tv;
+  private NetworkTableEntry ta;
+  private NetworkTableEntry tclass;
   private int pipeline;
 
   private double mountAngle; // Degrees
-  private double lensHeight = 20; // Inches
+  private double lensHeight = 10; // Inches
   // Target Height
 
   /** Creates a new Limelight. */
@@ -35,20 +38,33 @@ public class Limelight extends SubsystemBase {
     tx = table.getEntry("tx");
     ty = table.getEntry("ty"); 
     tv = table.getEntry("tv");
-    SmartDashboard.putNumber("tx", tx.getDouble(0));
+    ta = table.getEntry("ta");
+
+    // Only for vision based limelight
+    tclass = table.getEntry("tclass");
+
+    SmartDashboard.putNumber("tx", tv.getInteger(0));
     SmartDashboard.updateValues();
 
   }
   
-  // Uses tangent to get distance based on angle of tilt from vertical
-  public double calculateDistanceObject() {
-    double totalAngleDeg = mountAngle + getY();
-    // convert to radians
-    double totalAngleRads = totalAngleDeg * (Math.PI/180);
-
-    return -lensHeight/Math.tan(totalAngleRads);
+  // gets the error of the limelight to the detected object
+  public double getArea() {
+    double a = ta.getDouble(0.0);
+   
+    if (tv.getBoolean(false)) {
+      a = 0;
+    }
+    return a;   
   }
+// gets the type of object detected by the limelight
+  public GameObject getGameObject() {
+    String classData = tclass.getString("cube");
+    SmartDashboard.putBoolean("detectedValue", classData.contains("cube"));
+    SmartDashboard.updateValues();
 
+    return classData.contains("cube") ? GameObject.CUBE : GameObject.CONE;   
+  }
   // gets the error of the limelight to the detected object
   public double getX() {
     double x = tx.getDouble(0.0);
@@ -58,10 +74,14 @@ public class Limelight extends SubsystemBase {
     }
     return x;   
   }
-
+  public boolean getObjectSeen() {
+    return tv.getInteger(0) == 0 ? false : true;
+  }
   // gets the error of the limelight to the detected object
   public double getY() {
     double y = ty.getDouble(0.0);
+    SmartDashboard.putNumber("ty", y);
+    SmartDashboard.updateValues();
    
     if (tv.getBoolean(false)) {
       y = 0;
