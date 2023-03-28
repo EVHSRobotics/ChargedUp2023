@@ -16,7 +16,7 @@ import frc.robot.commands.FourBar;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.Vision;
 import frc.robot.commands.FourBar.IntakeType;
-import frc.robot.subsystems.Arm.BottomArmPosition;
+// import frc.robot.subsystems.Arm.BottomArmPosition;
 import frc.robot.subsystems.Arm.TopArmPosition;
 import frc.robot.subsystems.Intake.GameObject;
 import frc.robot.subsystems.Wrist.WristPosition;
@@ -63,7 +63,7 @@ public class SwerveCommand extends CommandBase {
 
       // Midddle
       fourBar.tPositionScoring = TopArmPosition.MIDDLE;
-      fourBar.bPositionScoring = BottomArmPosition.IN;
+      // fourBar.bPositionScoring = BottomArmPosition.IN;
       fourBar.wPositionScoring = WristPosition.MIDDLE;
       fourBar.shootArmTime = -1;
       fourBar.deployShoot = true;
@@ -73,7 +73,7 @@ public class SwerveCommand extends CommandBase {
       fourBar.setIntakeGameObject(GameObject.CUBE);
       // High
       fourBar.tPositionScoring = TopArmPosition.STRAIGHT;
-      fourBar.bPositionScoring = BottomArmPosition.IN;
+      // fourBar.bPositionScoring = BottomArmPosition.IN;
       fourBar.wPositionScoring = WristPosition.SHOOTING;
       fourBar.shootArmTime = -1;
       fourBar.deployShoot = true;

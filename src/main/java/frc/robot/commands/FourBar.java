@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.Arm.BottomArmPosition;
+// import frc.robot.subsystems.Arm.BottomArmPosition;
 import frc.robot.subsystems.Arm.SparkLEDColors;
 import frc.robot.subsystems.Arm.TopArmPosition;
 import frc.robot.subsystems.Intake.GameObject;
@@ -39,7 +39,7 @@ public class FourBar extends CommandBase {
   private XboxController xboxController;
   private XboxController driveController;
   public TopArmPosition tPositionScoring = TopArmPosition.DOWN;
-  public BottomArmPosition bPositionScoring = BottomArmPosition.IN;
+  // public BottomArmPosition bPositionScoring = BottomArmPosition.IN;
   public WristPosition wPositionScoring = WristPosition.UP;
 
   private long currentIntakeTime = -1;
@@ -94,7 +94,7 @@ this.vision = vision;
     // wrist.resetWristEncoder();
     wPositionScoring = WristPosition.UP;
     tPositionScoring = TopArmPosition.DOWN;
-    bPositionScoring = BottomArmPosition.IN;
+    // bPositionScoring = BottomArmPosition.IN;
     // Resets deploy intake and shoot, shootime
     deployIntake = false;
     deployShoot = false;
@@ -127,7 +127,7 @@ this.vision = vision;
       arm.setTopPosition(tPositionScoring);
       // arm.setBottomPosition(bPositionScoring);
 
-      if (wPositionScoring == WristPosition.UP && bPositionScoring == BottomArmPosition.IN && tPositionScoring == TopArmPosition.DOWN) {
+      if (wPositionScoring == WristPosition.UP && tPositionScoring == TopArmPosition.DOWN) {
         if (System.currentTimeMillis() - shootArmTime >= 700) {
           deployShoot = false;
         }
@@ -238,8 +238,13 @@ this.vision = vision;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
+
   @Override
   public void execute() {
+    
+    //add wrist offset for cycles 
+    wrist.checkCycle();
+
 
     // if(driveController.getYButtonPressed()){
       // arm.topArm.setNeutralMode(NeutralMode.Coast);
@@ -255,7 +260,7 @@ this.vision = vision;
 
     SmartDashboard.putNumber("Wrist", wrist.getWristMotorPosition());
     SmartDashboard.putNumber("Top Arm", arm.getTopArmPosition());
-    SmartDashboard.putNumber("Bottom Arm", arm.getBottomArmPosition());
+    // SmartDashboard.putNumber("Bottom Arm", arm.getBottomArmPosition());
     SmartDashboard.putBoolean("deployIntake", deployIntake);
     SmartDashboard.putBoolean("deployShoot", deployShoot);
     SmartDashboard.updateValues();
@@ -309,7 +314,7 @@ this.vision = vision;
       outtakePower = 0.8;
 
       tPositionScoring = TopArmPosition.STRAIGHT;
-      bPositionScoring = BottomArmPosition.IN;
+      // bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.SHOOTING;
       deployShoot = true;
 
@@ -320,7 +325,7 @@ this.vision = vision;
 
       outtakePower = 0.8;
       tPositionScoring = TopArmPosition.MIDDLE;
-      bPositionScoring = BottomArmPosition.IN;
+      // bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.MIDDLE;
       deployShoot = true;
     } 
@@ -330,7 +335,7 @@ this.vision = vision;
 
       outtakePower = 0.7;
       tPositionScoring = TopArmPosition.DOWN;
-      bPositionScoring = BottomArmPosition.IN;
+      // bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.UP;
         
       deployShoot = true;
@@ -384,7 +389,7 @@ this.vision = vision;
     }
 
     SmartDashboard.putNumber("Top Arm", arm.getTopArmPosition());
-    SmartDashboard.putNumber("Bottom Arm", arm.getBottomArmPosition());
+    // SmartDashboard.putNumber("Bottom Arm", arm.getBottomArmPosition());
     SmartDashboard.updateValues();
 
   }

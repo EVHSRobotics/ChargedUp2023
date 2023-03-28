@@ -72,9 +72,9 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         swerve = new Swerve();
-        reflectiveLimelight = new Limelight(0, "limelight-top");
-        aprilLimelight = new Limelight(1, "limelight-top");
-        gameObjectLimelight = new Limelight(0, "limelight-bottom");
+        reflectiveLimelight = new Limelight(0, "limelight-top", 45);
+        aprilLimelight = new Limelight(1, "limelight-top", 0);
+        gameObjectLimelight = new Limelight(0, "limelight-bottom", 45);
         arm = new Arm();
         intake = new Intake();
 
@@ -143,8 +143,8 @@ public class RobotContainer {
         if (autoChooser.getSelected() == "None") return null;
         // return new exampleAuto(s_Swerve);
         swerve.resetModulesToAbsolute();
-        fourBar.arm.resetArmEncoders();
-        fourBar.wrist.resetWristEncoder();
+        // fourBar.arm.resetArmEncoders();
+        // fourBar.wrist.resetWristEncoder();
 
         SmartDashboard.putString("auto", autoChooser.getSelected());
         SmartDashboard.updateValues();

@@ -16,12 +16,13 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry tv;
   private int pipeline;
 
-  private double mountAngle = 45; // Degrees
+  private double mountAngle; // Degrees
   private double lensHeight = 20; // Inches
   // Target Height
 
   /** Creates a new Limelight. */
-  public Limelight(int pipeline, String tableName) {
+  public Limelight(int pipeline, String tableName, double mountangle) {
+    this.mountAngle = mountangle;
     table = NetworkTableInstance.getDefault().getTable(tableName);
     this.pipeline = pipeline;
     table.getEntry("pipeline").setNumber(this.pipeline);

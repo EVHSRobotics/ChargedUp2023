@@ -43,6 +43,8 @@ public final class Constants {
         public static final int intake = 22;
 
         public static final int colorsDIO = 2;
+        public static int wristCANID = 0;
+        public static int armCANID = 0;
 
     }
 
