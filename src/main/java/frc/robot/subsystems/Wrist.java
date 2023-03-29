@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.math.MathUtil;
@@ -27,9 +28,8 @@ public class Wrist extends SubsystemBase {
   private double encoderOff = 0;
 
   public enum WristPosition{
-    //318.955 = cube ground pickup, cone ground pickup
-    //151.328125 = high cone
-    UP(60.55), MIDDLE(155.5), SHOOTING(255), HIGHINTAKE(130), STRAIGHTCUBE(354.408203), STRAIGHTCONE(354.408203);
+  
+    UP(5), MIDDLE(95), SHOOTING(321), HIGHINTAKE(130), STRAIGHTCUBE(330), STRAIGHTCONE(300);
     
  
      private double wristSensorPosition;  
@@ -55,7 +55,7 @@ public class Wrist extends SubsystemBase {
     // private final double gearratio = 0;
     // private final double kp = 0.001;
     private double lastWristPos = 0;
-    private static double wristOffset = 325;
+    private static double wristOffset = 0;
     double errorsum = 0;
     double lasterror = 0;
     double error;
@@ -131,8 +131,8 @@ public class Wrist extends SubsystemBase {
     // error is difference between expected vs current wrist position
     // p value for wrist with mag encoder should be 0.0016, integrator range 200
     public double setWristPosition(WristPosition wPosition) {
-      error = convertWristEncoder(wPosition.wristSensorPosition) - getWristMotorPosition();
-
+      error = (wPosition.wristSensorPosition) - wristCAN.getAbsolutePosition();
+      
       SmartDashboard.putNumber("wrist encoder", wristCAN.getAbsolutePosition());
       SmartDashboard.putNumber("wrist en errorcoder", error);
       SmartDashboard.updateValues();
@@ -141,15 +141,15 @@ public class Wrist extends SubsystemBase {
       if(Math.abs(lastWristPos - getWristMotorPosition()) < 15){
           errorsum += dt * (lastWristPos - getWristMotorPosition());
       }
-      double output = MathUtil.clamp(error*0.001 + errorrate*0.0 + errorsum*0.0, -1, 1);
+      double output = MathUtil.clamp(error*0.015 + errorrate*0.0 + errorsum*0.0, -1, 1);
       double lowerLimit = -2;
       SmartDashboard.putNumber("updateeeeee", wPosition.wristSensorPosition);
       // if(wrist.getSelectedSensorPosition() < lowerLimit && output < 0) output = 0;
-      // wrist.set(ControlMode.PercentOutput, -output);
+      wrist.set(ControlMode.PercentOutput, -output);
       lastTimestamp = Timer.getFPGATimestamp();
       lasterror = error;
       lastWristPos = getWristMotorPosition();
-      SmartDashboard.putNumber("out", output);
+      SmartDashboard.putNumber("out", -output);
       SmartDashboard.updateValues();
       return MathUtil.applyDeadband(output, 0.05);
 

@@ -122,7 +122,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 3; // TODO: This must be tuned to specific robot
+        public static final double maxSpeed = 6; // TODO: This must be tuned to specific robot
         /** Radians per Second */
         public static final double maxAngularVelocity = maxSpeed /
                 Math.hypot(trackWidth / 2.0, wheelBase / 2.0); // TODO: This must be tuned to specific robot

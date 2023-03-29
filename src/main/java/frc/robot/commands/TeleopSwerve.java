@@ -62,7 +62,6 @@ public class TeleopSwerve extends CommandBase {
         /* Drive */
 
         // Turn left
-        // s_Swerve.gyro.reset();
         if(swerveController.getLeftBumper() ){
             if(s_Swerve.gyro.getCompassHeading() > 180){
                 rotationVal = (180-s_Swerve.gyro.getCompassHeading())*0.01;
