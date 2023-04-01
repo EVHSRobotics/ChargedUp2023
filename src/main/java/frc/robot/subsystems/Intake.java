@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public GameObject gameObject = GameObject.CUBE;
+  public GameObject gameObject = GameObject.UNKNOWN;
 
   private TalonSRX intakeMotor;
 

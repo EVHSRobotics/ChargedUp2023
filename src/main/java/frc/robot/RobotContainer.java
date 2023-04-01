@@ -73,7 +73,7 @@ public class RobotContainer {
     public RobotContainer() {
         swerve = new Swerve();
         reflectiveLimelight = new Limelight(0, "limelight-top", 45);
-        aprilLimelight = new Limelight(1, "limelight-top", 0);
+        aprilLimelight = new Limelight(1, "limelight-bottom", 0);
         gameObjectLimelight = new Limelight(0, "limelight-bottom", 45);
         arm = new Arm();
         intake = new Intake();
@@ -94,6 +94,7 @@ public class RobotContainer {
         autoChooser.addOption("Middle Shoot", "Middle Shoot");
         autoChooser.addOption("Right Shoot", "Right Shoot");
         autoChooser.addOption("2 Cube Balance 28 PT", "2 Cube Balance 28 PT");
+        autoChooser.addOption("Worlds Path", "Worlds Path");
 
         SmartDashboard.putData(autoChooser);
         SmartDashboard.updateValues();
@@ -149,6 +150,7 @@ public class RobotContainer {
         SmartDashboard.putString("auto", autoChooser.getSelected());
         SmartDashboard.updateValues();
         
+        
         // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
     // for every path in the group
     List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(autoChooser.getSelected(), new PathConstraints(2, 1.5));
@@ -172,13 +174,14 @@ public class RobotContainer {
         swerve::getPose, // Pose2d supplier
         swerve::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
         Constants.Swerve.swerveKinematics, // SwerpatveDriveKinematics
-        new PIDConstants(2, 1.2, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+        new PIDConstants(-2, 1.2, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
         new PIDConstants(2.5, 1, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
         swerve::setModuleStates, // Module states consumer used to output to the drive subsystem
         eventMap,
         true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
         swerve // The drive subsystem. Used to properly set the requirements of path following commands
     );
+    
     
     // PathPlannerServer.startServer(5811);
 

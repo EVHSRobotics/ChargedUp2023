@@ -29,10 +29,10 @@ public class Wrist extends SubsystemBase {
 
   public enum WristPosition{
   
-    UP(5), MIDDLE(95), SHOOTING(321), HIGHINTAKE(130), STRAIGHTCUBE(330), STRAIGHTCONE(300);
+    UP(15), MIDDLE(185), SHOOTINGCUBE(380), SHOOTINGCONE(495), HIGHINTAKE(450), STRAIGHTCUBE(330), STRAIGHTCONE(320);
     
- 
      private double wristSensorPosition;  
+     
      public double getWrist() {
       return convertWristEncoder(wristSensorPosition);
      }
@@ -40,6 +40,7 @@ public class Wrist extends SubsystemBase {
        this.wristSensorPosition = wristSensorPosition;
      }
    }
+
 
 
   
@@ -93,6 +94,9 @@ public class Wrist extends SubsystemBase {
 
     }
 
+    public void resetWrist() {
+      wristCAN.setPosition(0);
+    }
 
     // gets the wrist position
     public double getWristMotorPosition() {
@@ -131,9 +135,9 @@ public class Wrist extends SubsystemBase {
     // error is difference between expected vs current wrist position
     // p value for wrist with mag encoder should be 0.0016, integrator range 200
     public double setWristPosition(WristPosition wPosition) {
-      error = (wPosition.wristSensorPosition) - wristCAN.getAbsolutePosition();
+      error = (wPosition.wristSensorPosition) - wristCAN.getPosition();
       
-      SmartDashboard.putNumber("wrist encoder", wristCAN.getAbsolutePosition());
+      SmartDashboard.putNumber("wrist encoder", wristCAN.getPosition());
       SmartDashboard.putNumber("wrist en errorcoder", error);
       SmartDashboard.updateValues();
       double dt = Timer.getFPGATimestamp() - lastTimestamp;
@@ -141,7 +145,7 @@ public class Wrist extends SubsystemBase {
       if(Math.abs(lastWristPos - getWristMotorPosition()) < 15){
           errorsum += dt * (lastWristPos - getWristMotorPosition());
       }
-      double output = MathUtil.clamp(error*0.015 + errorrate*0.0 + errorsum*0.0, -1, 1);
+      double output = MathUtil.clamp(error*0.01 + errorrate*0.0 + errorsum*0.0, -1, 1);
       double lowerLimit = -2;
       SmartDashboard.putNumber("updateeeeee", wPosition.wristSensorPosition);
       // if(wrist.getSelectedSensorPosition() < lowerLimit && output < 0) output = 0;

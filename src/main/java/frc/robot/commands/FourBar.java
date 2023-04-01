@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.Subscriber;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -126,10 +127,24 @@ this.vision = vision;
       }
       arm.setTopPosition(tPositionScoring);
       // arm.setBottomPosition(bPositionScoring);
+      if (intake.gameObject == GameObject.CONE) {
+        arm.setLED(SparkLEDColors.SHOOTYELLOW);
 
+      }
+      else if (intake.gameObject == GameObject.CUBE) {
+        arm.setLED(SparkLEDColors.SHOOTBLUE);
+
+      }
+      else {
+        arm.setLED(SparkLEDColors.SHOOT);
+
+      }
       if (wPositionScoring == WristPosition.UP && tPositionScoring == TopArmPosition.DOWN) {
         if (System.currentTimeMillis() - shootArmTime >= 700) {
+          intake.gameObject = GameObject.UNKNOWN;
+
           deployShoot = false;
+
         }
         else {
           intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
@@ -138,13 +153,15 @@ this.vision = vision;
       }
       else {
       if (System.currentTimeMillis() - shootArmTime >= 5500) {
+        intake.gameObject = GameObject.UNKNOWN;
+
         deployShoot = false;
+
 
       } else if (System.currentTimeMillis() - shootArmTime >= 5000) {
         wrist.setWristPosition(WristPosition.UP);
       } else if (System.currentTimeMillis() - shootArmTime >= 3000) {
         intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
-        arm.setLED(SparkLEDColors.SHOOT);
       } else if (System.currentTimeMillis() - shootArmTime >= 700) {
         wrist.setWristPosition(wPositionScoring);
 
@@ -189,17 +206,18 @@ this.vision = vision;
     else if (cIntakeType == IntakeType.LOW) {
       
       if (action) {
+
         // if (vision.aimLimelightGameObjectPickup(intake.gameObject)) {
 
         
         // If the game object is a cone vs a cube we set different wrist positions and led colors
         if (intake.gameObject == GameObject.CONE) {
           wrist.setWristPosition(WristPosition.STRAIGHTCONE);
-          arm.setLED(SparkLEDColors.PURPLE);
+          arm.setLED(SparkLEDColors.YELLOW);
 
         } else {
           wrist.setWristPosition(WristPosition.STRAIGHTCUBE);
-          arm.setLED(SparkLEDColors.YELLOW);
+          arm.setLED(SparkLEDColors.PURPLE);
 
         }
 
@@ -293,11 +311,20 @@ this.vision = vision;
     // This is for the dpad, where if you click the top it will reset all of the properties for the top scoring
     if (xboxController.getPOV() == 0) {
       shootArmTime = -1;
-      outtakePower = 0.8;
+        outtakePower = 0.8;
+
+   
 
       tPositionScoring = TopArmPosition.STRAIGHT;
       // bPositionScoring = BottomArmPosition.IN;
-      wPositionScoring = WristPosition.SHOOTING;
+      if (intake.gameObject == GameObject.CUBE) {
+
+      wPositionScoring = WristPosition.SHOOTINGCUBE;
+      }
+      else {
+        wPositionScoring = WristPosition.SHOOTINGCONE;
+
+      }
       deployShoot = true;
 
     } 
@@ -305,7 +332,7 @@ this.vision = vision;
     else if (xboxController.getPOV() == 90) {
       shootArmTime = -1;
 
-      outtakePower = 0.8;
+      outtakePower = 0.6;
       tPositionScoring = TopArmPosition.MIDDLE;
       // bPositionScoring = BottomArmPosition.IN;
       wPositionScoring = WristPosition.MIDDLE;
@@ -338,9 +365,23 @@ this.vision = vision;
       // arm.setBottomPosition(BottomArmPosition.IN);
       arm.setTopPosition(TopArmPosition.DOWN);
       wrist.setWristPosition(WristPosition.UP);
-      arm.setLED(SparkLEDColors.RAINBOW);
 
+      // arm.resetArmEncoders();
+      // wrist.resetWristEncoders();
+          
         
+        // Set the LEDS based on what game object we are intaking
+        if (intake.gameObject == GameObject.CUBE) {
+          // Cube
+          arm.setLED(SparkLEDColors.PURPLE);
+        } else if (intake.gameObject == GameObject.CONE) {
+          // Cone
+          arm.setLED(SparkLEDColors.YELLOW);
+        }
+        else {
+          arm.setLED(SparkLEDColors.RAINBOW);
+
+        }
 
         if (xboxController.getLeftTriggerAxis() > 0.1) {
 

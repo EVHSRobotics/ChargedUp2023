@@ -42,7 +42,7 @@ private CANCoder armCAN;
 
 public enum SparkLEDColors {
 
-  RAINBOW(-0.99), SHOOT(-0.15), PURPLE(0.89), YELLOW(0.69);
+  RAINBOW(-0.99), SHOOT(-0.15), PURPLE(0.89), YELLOW(0.69), SHOOTYELLOW(-0.07), SHOOTBLUE(-0.09);
 
   private double ledColorValue;
 
@@ -75,8 +75,9 @@ public enum SparkLEDColors {
    // CAN values based of high intake being ~ 80 degrees up from original position, must be retuned
   public enum TopArmPosition {
 
-    DOWN(242.209), MIDDLE(223.32), STRAIGHT(177.348), HIGHINTAKE(177.229);
+    // DOWN(242.209), MIDDLE(220.32), STRAIGHT(177.348), HIGHINTAKE(177.229);
     
+    DOWN(-2.5), MIDDLE(-25), STRAIGHT(-80), HIGHINTAKE(-70);
     
      
      private double tArmSensorPosition;
@@ -151,11 +152,11 @@ public enum SparkLEDColors {
   }
 
 
-  // public void resetArmEncoders() {
-  //   topArm.setSelectedSensorPosition(0);
-  //   // bottomArm.setSelectedSensorPosition(0);
+  public void resetArmEncoders() {
+    armCAN.setPosition(0);
+    // bottomArm.setSelectedSensorPosition(0);
     
-  // }
+  }
 
   public void setLED(SparkLEDColors ledColor) {
   
@@ -224,11 +225,11 @@ public enum SparkLEDColors {
   // p value for mag encdeor proportionally should be 0.0012, integrator range 25
   // 0.000004 p value prev
   public double setTopPosition(TopArmPosition tPosition){
-    SmartDashboard.putNumber("CANCODER VALUE", armCAN.getAbsolutePosition());
+    SmartDashboard.putNumber("CANCODER VALUE", armCAN.getPosition());
     SmartDashboard.putNumber("CANCODER VALUE MODIFIED", getTopArmPosition());
     SmartDashboard.updateValues();
     
-    tError = convertArmEncoder(tPosition.tArmSensorPosition) - getTopArmPosition();
+    tError = (tPosition.tArmSensorPosition) - armCAN.getPosition();
 
     double dt = Timer.getFPGATimestamp() - lastTimestamp;
     double errorrate = (tError-tLastError)/dt;
@@ -236,7 +237,7 @@ public enum SparkLEDColors {
         tErrorSum += dt * tError;
         //00000001
     }
-    double output = MathUtil.clamp(tError*0.047   + errorrate *0+tErrorSum*0.0, -1, 1);
+    double output = -MathUtil.clamp(tError*0.057   + errorrate *0.001+tErrorSum*0.0, -1, 1);
     SmartDashboard.putNumber("TARGET TOP VALUE", Arm.convertArmEncoder(tPosition.tArmSensorPosition));
     SmartDashboard.putNumber("Top PID Output", ( output));
     SmartDashboard.updateValues();

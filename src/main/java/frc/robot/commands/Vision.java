@@ -80,28 +80,49 @@ addRequirements(gameObjectLimelight);
       // }
       
     }
+
+    if (xboxController.getYButtonPressed()) {
+
+    
+    if (intake.gameObject == GameObject.CUBE) {
+      aimLimelightAprilTags();
+    }
+    else {
+      aimLimelightReflective();
+    }
+  }
    
   }
 
   public boolean aimLimelightGameObjectPickup(GameObject gameObject) {
       
+
+
+    
     if (!gameObjectLimelight.getObjectSeen()) { return true; }
-        double gameObjectArea = gameObjectLimelight.getArea();
+
+    double gameObjectDistance = gameObjectLimelight.getObjectDistanceCone();
+
+    if (gameObject == GameObject.CUBE) {
+      gameObjectDistance = gameObjectLimelight.getObjectDistanceCube();
+
+    }
+       SmartDashboard.putNumber("game Object Distance meters",gameObjectLimelight.getObjectDistanceCone());
+       SmartDashboard.updateValues();
         
         
-        SmartDashboard.putNumber("KP Horizontal Object Detection", gameObjectArea);
         SmartDashboard.putBoolean("Game Object", gameObject == GameObject.CUBE);
 SmartDashboard.updateValues();
         // Max is 1.5 Meters to take affect
-          double kpVert = MathUtil.applyDeadband((((gameObject == GameObject.CUBE) ? 1 : 25) -gameObjectArea) * 0.03, 0.02);
+          double kpVert = MathUtil.applyDeadband((((gameObject == GameObject.CUBE) ? 15 : 22) -gameObjectDistance) * 0.03, 0.02);
           double kpHori = MathUtil.applyDeadband(gameObjectLimelight.getX() * 0.03, 0.02);
           SmartDashboard.putNumber("KP Vertical Object Detection", kpVert);
           SmartDashboard.updateValues();
             // 1.5 meters
             swerve.drive(
-            new Translation2d(-kpVert, kpHori).times(Constants.Swerve.maxSpeed).times(0.75), 
+            new Translation2d(kpVert, kpHori).times(Constants.Swerve.maxSpeed).times(0.75), 
             0 * Constants.Swerve.maxAngularVelocity, 
-            true, 
+            false, 
             true
         );
         if (kpVert <= 0.02 && kpHori <= 0.02) {
@@ -130,6 +151,7 @@ return gameObjectLimelight.getGameObject();
     if(Math.abs(x) < 0.1){
         errorsum += dt *  x;
     }
+    
     double output = MathUtil.clamp(error*0.045 + errorrate *0+errorsum*0.0, -1, 1);
 
     SmartDashboard.putNumber("limelight", ( output));

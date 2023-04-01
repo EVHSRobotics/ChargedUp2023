@@ -60,7 +60,7 @@ public class Limelight extends SubsystemBase {
 // gets the type of object detected by the limelight
   public GameObject getGameObject() {
     String classData = tclass.getString("cube");
-    SmartDashboard.putBoolean("detectedValue", classData.contains("cube"));
+    SmartDashboard.putString("detectedValue", classData);
     SmartDashboard.updateValues();
 
     return classData.contains("cube") ? GameObject.CUBE : GameObject.CONE;   
@@ -87,5 +87,18 @@ public class Limelight extends SubsystemBase {
       y = 0;
     }
     return y;   
+  }
+
+  public double getObjectDistanceCone() {
+    double testArea = 17.7, testDis = 28.0;
+    double d = Math.sqrt(testArea/getArea()) * testDis;
+    return d; 
+    // return ((lensHeight) / Math.abs(Math.tan(Math.toRadians(getY())))/2.0);
+  }
+  public double getObjectDistanceCube() {
+    double testArea = 14.8, testDis = 26.0;
+    double d = Math.sqrt(testArea/getArea()) * testDis;
+    return d; 
+    // return ((lensHeight) / Math.abs(Math.tan(Math.toRadians(getY())))/2.0);
   }
 }

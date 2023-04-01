@@ -74,7 +74,7 @@ public class SwerveCommand extends CommandBase {
       // High
       fourBar.tPositionScoring = TopArmPosition.STRAIGHT;
       // fourBar.bPositionScoring = BottomArmPosition.IN;
-      fourBar.wPositionScoring = WristPosition.SHOOTING;
+      fourBar.wPositionScoring = WristPosition.SHOOTINGCUBE;
       fourBar.shootArmTime = -1;
       fourBar.deployShoot = true;
         break;
@@ -88,7 +88,6 @@ public class SwerveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     switch (commandAction) {
      
       case AUTOALIGNRAMP:
