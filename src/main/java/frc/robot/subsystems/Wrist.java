@@ -29,7 +29,7 @@ public class Wrist extends SubsystemBase {
 
   public enum WristPosition{
   
-    UP(15), MIDDLE(185), SHOOTINGCUBE(380), SHOOTINGCONE(495), HIGHINTAKE(450), STRAIGHTCUBE(330), STRAIGHTCONE(320);
+    UP(15), MIDDLE(185), SHOOTINGCUBE(390), SHOOTINGCONE(490), HIGHINTAKE(450), STRAIGHTCUBE(330), STRAIGHTCONE(320);
     
      private double wristSensorPosition;  
      

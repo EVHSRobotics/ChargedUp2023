@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 
 
 public class Swerve extends SubsystemBase {
+    // private double compassOffset;
 
     // Swerve Odomtery position tracking
     public SwerveDriveOdometry swerveOdometry;
@@ -34,6 +35,8 @@ public class Swerve extends SubsystemBase {
     public AHRS gyro;
     public Swerve() {
         gyro = new AHRS(SerialPort.Port.kUSB1);
+        // compassOffset = gyro.getYaw() + 180;
+
         // resetting gyro
 
 //        zeroGyro();
@@ -111,15 +114,20 @@ public class Swerve extends SubsystemBase {
         return positions;
     }
 
-    public void zeroGyro(){
-        gyro.zeroYaw();
-        // gyroVertical.zeroYaw();
-    }
+    // public void zeroGyro(){
+    //     gyro.zeroYaw();
+    //     // gyroVertical.zeroYaw();
+    // }
 
    
     public Rotation2d getYaw() {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
+
+    // public Rotation2d getYaw() {
+    //     SmartDashboard.putNumber("gyrovalueyooh", convertCompass(gyroYaw360()));
+    //     return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(convertCompass(360 - gyroYaw360())) : Rotation2d.fromDegrees(convertCompass(gyroYaw360()));
+    // }
 
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
@@ -127,10 +135,22 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    // public double gyroYaw360(){
+    //     return gyro.getYaw() + 180;
+    // }
+
+    // public double convertCompass(double heading){
+    //     if(heading >= compassOffset){
+    //         return heading - compassOffset;
+    //     } else {
+    //         return (360 - compassOffset) + heading;
+    //     }
+    // }
+
 
 
     @Override
-    public void periodic(){
+    public void periodic(){ 
         swerveOdometry.update(getYaw(), getModulePositions());  
 
         for(SwerveModule mod : mSwerveMods){

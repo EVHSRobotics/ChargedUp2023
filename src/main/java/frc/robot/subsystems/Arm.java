@@ -237,7 +237,7 @@ public enum SparkLEDColors {
         tErrorSum += dt * tError;
         //00000001
     }
-    double output = -MathUtil.clamp(tError*0.057   + errorrate *0.001+tErrorSum*0.0, -1, 1);
+    double output = -MathUtil.clamp(tError*0.063   + errorrate *0.001+tErrorSum*0.0, -1, 1);
     SmartDashboard.putNumber("TARGET TOP VALUE", Arm.convertArmEncoder(tPosition.tArmSensorPosition));
     SmartDashboard.putNumber("Top PID Output", ( output));
     SmartDashboard.updateValues();

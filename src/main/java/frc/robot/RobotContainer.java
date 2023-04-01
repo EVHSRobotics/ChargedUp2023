@@ -123,7 +123,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> swerve.zeroGyro()));
+        // zeroGyro.onTrue(new InstantCommand(() -> swerve.zeroGyro()));
 
 
 
@@ -174,7 +174,7 @@ public class RobotContainer {
         swerve::getPose, // Pose2d supplier
         swerve::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
         Constants.Swerve.swerveKinematics, // SwerpatveDriveKinematics
-        new PIDConstants(-2, 1.2, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+        new PIDConstants(2, 1.2, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
         new PIDConstants(2.5, 1, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
         swerve::setModuleStates, // Module states consumer used to output to the drive subsystem
         eventMap,
@@ -183,7 +183,6 @@ public class RobotContainer {
     );
     
     
-    // PathPlannerServer.startServer(5811);
 
     // Thread.sleep(1000);
     return autoBuilder.fullAuto(pathGroup);

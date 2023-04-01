@@ -71,7 +71,8 @@ public class TeleopSwerve extends CommandBase {
 
         driverMatchTime = DriverStation.getMatchTime();
 
-        
+        driveSpeedEntry.setDouble(driverMatchTime);
+
         /* Drive */
 
         // Turn left
@@ -149,7 +150,7 @@ public class TeleopSwerve extends CommandBase {
                 s_Swerve.drive(
                     new Translation2d((5.35-gyroPitch()) * 0.02, 0).times(Constants.Swerve.maxSpeed).times(0.5), 
                     0 * Constants.Swerve.maxAngularVelocity, 
-                    true, 
+                    false, 
                     true
                 );
             

@@ -43,6 +43,7 @@ public class FourBar extends CommandBase {
   // public BottomArmPosition bPositionScoring = BottomArmPosition.IN;
   public WristPosition wPositionScoring = WristPosition.UP;
 
+  private boolean voltageAutoIntake = true;
   private long currentIntakeTime = -1;
   private boolean cubeBooleanFlag = false;
   public boolean deployIntake = false;
@@ -95,6 +96,7 @@ this.vision = vision;
     // wrist.resetWristEncoder();
     wPositionScoring = WristPosition.UP;
     tPositionScoring = TopArmPosition.DOWN;
+    voltageAutoIntake = true;
     // bPositionScoring = BottomArmPosition.IN;
     // Resets deploy intake and shoot, shootime
     deployIntake = false;
@@ -164,7 +166,7 @@ this.vision = vision;
         intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
       } else if (System.currentTimeMillis() - shootArmTime >= 700) {
         wrist.setWristPosition(wPositionScoring);
-
+intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakePower);
       }
     }
     }
@@ -189,7 +191,9 @@ this.vision = vision;
         }
         
        
-        
+        // if (voltageAutoIntake && intake.getIntakeCurrent() >= 28) {
+        //   deployIntake = false;
+        // }
         // Set the LEDS based on what game object we are intaking
         if (intake.gameObject == GameObject.CUBE) {
           // Cube
@@ -208,7 +212,9 @@ this.vision = vision;
       if (action) {
 
         // if (vision.aimLimelightGameObjectPickup(intake.gameObject)) {
-
+          // if (voltageAutoIntake && intake.getIntakeCurrent() >= 28) {
+          //   deployIntake = false;
+          // }
         
         // If the game object is a cone vs a cube we set different wrist positions and led colors
         if (intake.gameObject == GameObject.CONE) {
@@ -247,8 +253,7 @@ this.vision = vision;
     // }
 
 
-    SmartDashboard.putNumber("volts bus", arm.topArm.getBusVoltage());
-    SmartDashboard.putNumber("motor out ", arm.topArm.getMotorOutputVoltage());
+    SmartDashboard.putNumber("motor out ", intake.getIntakeCurrent());
     SmartDashboard.putNumber("wrist encoder", wrist.getWristMotorPosition());
     SmartDashboard.updateValues();
 
@@ -259,6 +264,9 @@ this.vision = vision;
     SmartDashboard.putBoolean("deployShoot", deployShoot);
     SmartDashboard.updateValues();
 
+    if (driveController.getBButtonPressed()) {
+      voltageAutoIntake = !voltageAutoIntake;
+    }
     // All of the button controls with setting values
     if (xboxController.getYButtonPressed()) {
       intake.gameObject = GameObject.CONE;
@@ -302,9 +310,9 @@ this.vision = vision;
     // boardLowIntake.setBoolean(cI/);
     boardIntakeIn.setBoolean(deployIntake);
     boardShoot.setBoolean(deployShoot);
+ 
 
     SmartDashboard.putNumber("Selected Sensor Intake Velocity", intake.getIntakeCurrent());
-    SmartDashboard.putNumber("Intake Motor Velocity", intake.getIntakeVelocity());
     SmartDashboard.putNumber("POV", xboxController.getPOV());
     SmartDashboard.updateValues();
 
@@ -384,18 +392,24 @@ this.vision = vision;
         }
 
         if (xboxController.getLeftTriggerAxis() > 0.1) {
-
+          intake.gameObject = GameObject.UNKNOWN;
           intake.runIntake(0.7);
   
         } else if (xboxController.getRightTriggerAxis() > 0.1) {
-  
+  intake.gameObject = GameObject.UNKNOWN;
           intake.runIntake(-0.7);
   
         } else {
+          // if (intake.gameObject == GameObject.CONE) {
+          //   intake.runIntake(0.7);
+          // }
+          // else {
+            intake.runIntake(0);
+
+          // }
           
       // Manual Intake Control
       // if (Math.abs(intake.getIntakeCurrent()) < 22) {
-        intake.runIntake(0);
 
       // }
       // else {

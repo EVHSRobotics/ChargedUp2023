@@ -77,13 +77,11 @@ public class Intake extends SubsystemBase {
   }
 
 
-  public double getIntakeVelocity() {
-    return intakeMotor.getSupplyCurrent();
-  }
+
   // Gets intake current in Amps
   // more than 20 AMPS = Motor stalling
   public double getIntakeCurrent() {
-    return intakeMotor.getStatorCurrent();
+    return Math.abs(intakeMotor.getStatorCurrent());
   }
   // Matches the color reading from the color sensor the closest color
   public GameObject getColorSensorGameObject() {

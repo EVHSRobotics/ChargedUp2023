@@ -161,7 +161,7 @@ return gameObjectLimelight.getGameObject();
     
     swerve.drive(new Translation2d(
         0, MathUtil.applyDeadband(output, 0.05)).times(Constants.Swerve.maxSpeed).times(0.5),
-        0, true, false);
+        0, false, false);
   }
 
   public void aimLimelightAprilTags() {
@@ -184,7 +184,7 @@ return gameObjectLimelight.getGameObject();
     
     swerve.drive(new Translation2d(
         0, MathUtil.applyDeadband(output, 0.05)).times(Constants.Swerve.maxSpeed).times(0.5),
-        0, true, false);
+        0, false, false);
   }
   
 
