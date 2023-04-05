@@ -1,10 +1,11 @@
 {
   "SysId": {
-    "Analysis Type": "General Mechanism",
+    "Analysis Type": "Drivetrain",
     "NetworkTables Settings": {
       "serverTeam": "2854"
     },
     "mode": "Client (NT4)",
+    "port4": 5811,
     "serverTeam": "2854"
   }
 }

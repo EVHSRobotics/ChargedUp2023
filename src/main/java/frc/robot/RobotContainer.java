@@ -58,7 +58,8 @@ public class RobotContainer {
     private final VideoServer videoServer;
     private final Limelight aprilLimelight;
     private final Limelight reflectiveLimelight;
-    private final Limelight gameObjectLimelight;
+    private final Limelight gameObjectBottomLimelight;
+    private final Limelight gameObjectTopLimelight;
 
     private final Arm arm;
     private final Wrist wrist;
@@ -72,9 +73,10 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         swerve = new Swerve();
-        reflectiveLimelight = new Limelight(0, "limelight-top", 45);
+        reflectiveLimelight = new Limelight(2, "limelight-bottom", 45);
+        gameObjectTopLimelight = new Limelight(1, "limelight-top", 45);
         aprilLimelight = new Limelight(1, "limelight-bottom", 0);
-        gameObjectLimelight = new Limelight(0, "limelight-bottom", 45);
+        gameObjectBottomLimelight = new Limelight(0, "limelight-bottom", 0);
         arm = new Arm();
         intake = new Intake();
 
@@ -84,6 +86,7 @@ public class RobotContainer {
 
         driveController = new XboxController(Constants.Controller.driveControllerPort);
         operatorController = new XboxController(Constants.Controller.operatorControllerPort);
+        // swerve.gyro.reset();
 
         autoChooser = new SendableChooser<String>();
         autoChooser.addOption("None", "None");
@@ -108,7 +111,7 @@ public class RobotContainer {
                 driveController
             );
         
-        vision = new Vision(swerve, aprilLimelight, reflectiveLimelight, gameObjectLimelight, intake, videoServer, driveController);
+        vision = new Vision(swerve, aprilLimelight, reflectiveLimelight, gameObjectTopLimelight, gameObjectBottomLimelight, intake, videoServer, driveController);
         fourBar = new FourBar(arm, wrist, intake, vision, operatorController, driveController);
 
         // Configure the button bindings
@@ -150,44 +153,53 @@ public class RobotContainer {
         SmartDashboard.putString("auto", autoChooser.getSelected());
         SmartDashboard.updateValues();
         
-        
+        s_Swerve.fieldRelative = true;
         // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
     // for every path in the group
     List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(autoChooser.getSelected(), new PathConstraints(2, 1.5));
-    
+    // swerve.gyro.reset();
     // This is just an example event map. It would be better to have a constant, global event map
     // in your code that will be used by all path following commands.
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("Auto Align Ramp", new SwerveCommand(PathCommandAction.AUTOALIGNRAMP, fourBar, vision, s_Swerve));
-    eventMap.put("Outtake High", new SwerveCommand(PathCommandAction.OUTTAKEHIGH, fourBar, vision, s_Swerve));
+    eventMap.put("Outtake Cube", new SwerveCommand(PathCommandAction.OUTTAKEHIGH, fourBar, vision, s_Swerve));
     eventMap.put("Outtake Mid", new SwerveCommand(PathCommandAction.OUTTAKEMID, fourBar, vision, s_Swerve));
     eventMap.put("Intake", new SwerveCommand(PathCommandAction.INTAKE, fourBar, vision, s_Swerve));
+    eventMap.put("AlignCube", new SwerveCommand(PathCommandAction.ALIGNCUBE, fourBar, vision, s_Swerve));
+    eventMap.put("AlignCube", new SwerveCommand(PathCommandAction.ALIGNCUBE, fourBar, vision, s_Swerve));
     // eventMap.put("Outake Cube 1", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Outake Cone 1", new SwerveCommand(PathCommandAction.OUTTAKECONE, fourBar, vision, teleopSwerve));
     // eventMap.put("Intake Cube 2", new SwerveCommand(PathCommandAction.INTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Intake Cone 1", new SwerveCommand(PathCommandAction.INTAKECONE, fourBar, vision, teleopSwerve));
     // eventMap.put("marker1", new PrintCommand("Passed marker 1"));
     // eventMap.put("intakeDown", new IntakeDown());
-    
+ 
     // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
     SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
         swerve::getPose, // Pose2d supplier
         swerve::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
         Constants.Swerve.swerveKinematics, // SwerpatveDriveKinematics
-        new PIDConstants(2, 1.2, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-        new PIDConstants(2.5, 1, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+        new PIDConstants(5, 0.0, 0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+        new PIDConstants(0.5, 0.3, 0), // PID constants to correct for rotation error (used to create the rotation controller)
         swerve::setModuleStates, // Module states consumer used to output to the drive subsystem
         eventMap,
         true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
         swerve // The drive subsystem. Used to properly set the requirements of path following commands
     );
+
+    // Field
+    // 1.3, 0, 0.15
+    // 0.65, 0.2, 0.1
+    // Absolute
+    // 2, 1.2
+    // 2.5, 1
     
-    
+    PathPlannerServer.startServer(5811);
 
     // Thread.sleep(1000);
     return autoBuilder.fullAuto(pathGroup);
     // c = autoBuilder.followPathGroupWithEvents(pathGroup);
 
-
+    
 }
 }

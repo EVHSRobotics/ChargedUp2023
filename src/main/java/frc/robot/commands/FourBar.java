@@ -28,6 +28,7 @@ import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Arm.SparkLEDColors;
 import frc.robot.subsystems.Arm.TopArmPosition;
 import frc.robot.subsystems.Intake.GameObject;
+import frc.robot.subsystems.Intake.IntakeType;
 import frc.robot.subsystems.Wrist.WristPosition;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
@@ -35,7 +36,7 @@ import frc.robot.subsystems.Arm;
 public class FourBar extends CommandBase {
 
   public Wrist wrist;
-  private Intake intake;
+  public Intake intake;
   public Arm arm;
   private XboxController xboxController;
   private XboxController driveController;
@@ -55,15 +56,7 @@ public class FourBar extends CommandBase {
   private GenericEntry boardLowIntake;
   private GenericEntry boardShoot;
   private Vision vision;
-  public IntakeType cIntakeType = IntakeType.LOW;
-
-  // Different intake types
-  // High - Human Player Station
-  // Low - When you lower the intake right on the game element
-  // Ground - You can intake the cone when it is flipped
-  public enum IntakeType {
-    LOW, HIGH, GROUND;
-  }
+  
 
   /** Creates a new Claw. */
   public FourBar(Arm arm, Wrist wrist, Intake intake, Vision vision, XboxController controller, XboxController driveController) {
@@ -101,7 +94,7 @@ this.vision = vision;
     // Resets deploy intake and shoot, shootime
     deployIntake = false;
     deployShoot = false;
-    cIntakeType = IntakeType.LOW;
+    intake.cIntakeType = IntakeType.LOW;
     shootArmTime = -1;
 
   }
@@ -154,15 +147,17 @@ this.vision = vision;
         } 
       }
       else {
-      if (System.currentTimeMillis() - shootArmTime >= 5500) {
+    
+        double offset = tPositionScoring == TopArmPosition.MIDDLE ? -1000 : 0;
+      if (System.currentTimeMillis() - shootArmTime >= (5500 + offset)) {
         intake.gameObject = GameObject.UNKNOWN;
 
         deployShoot = false;
 
 
-      } else if (System.currentTimeMillis() - shootArmTime >= 5000) {
+      } else if (System.currentTimeMillis() - shootArmTime >= (5000 + offset)) {
         wrist.setWristPosition(WristPosition.UP);
-      } else if (System.currentTimeMillis() - shootArmTime >= 3000) {
+      } else if (System.currentTimeMillis() - shootArmTime >= (3000 + offset)) {
         intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
       } else if (System.currentTimeMillis() - shootArmTime >= 700) {
         wrist.setWristPosition(wPositionScoring);
@@ -179,7 +174,7 @@ intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakeP
     
    
     // If the intake is high, then i first set the arm position to straight, set the wirst to high intake
-    if (cIntakeType == IntakeType.HIGH) {
+    if (intake.cIntakeType == IntakeType.HIGH) {
       if (action) {
         
         if (arm.setTopPosition(TopArmPosition.HIGHINTAKE) < 0.4) {
@@ -207,7 +202,7 @@ intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakeP
 
     }
     // if the intake is low, then we 
-    else if (cIntakeType == IntakeType.LOW) {
+    else if (intake.cIntakeType == IntakeType.LOW) {
       
       if (action) {
 
@@ -271,39 +266,39 @@ intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakeP
     if (xboxController.getYButtonPressed()) {
       intake.gameObject = GameObject.CONE;
       outtakePower = 1.0;
-      cIntakeType = IntakeType.LOW;
+     intake.cIntakeType = IntakeType.LOW;
       deployIntake = !deployIntake;
     }
 
     if (xboxController.getXButtonPressed()) {
       intake.gameObject = GameObject.CUBE;
       outtakePower = 1.0;
-      cIntakeType = IntakeType.LOW;
+      intake.cIntakeType = IntakeType.LOW;
       deployIntake = !deployIntake;
     }
     if (xboxController.getAButtonPressed()) {
-      intake.gameObject = vision.getCurrentDetectedGameObject();
+      intake.gameObject = vision.getCurrentDetectedGameObject(vision.gameObjectBottomLimelight);
       outtakePower = 1.0;
-      cIntakeType = IntakeType.LOW;
+      intake.cIntakeType = IntakeType.LOW;
       deployIntake = !deployIntake;
     }
 
     if (xboxController.getBButtonPressed()) {
       intake.gameObject = GameObject.CONE;
       outtakePower = 1.0;
-      cIntakeType = IntakeType.GROUND;
+      intake.cIntakeType = IntakeType.GROUND;
       deployIntake = !deployIntake;
     }
     if (xboxController.getLeftBumperPressed()) {
       intake.gameObject = GameObject.CUBE;
       outtakePower = 1.0;
-      cIntakeType = IntakeType.HIGH;
+      intake.cIntakeType = IntakeType.HIGH;
       deployIntake = !deployIntake;
     }
     if (xboxController.getRightBumperPressed()) {
       intake.gameObject = GameObject.CONE;
       outtakePower = 1.0;
-      cIntakeType = IntakeType.HIGH;
+      intake.cIntakeType = IntakeType.HIGH;
       deployIntake = !deployIntake;
     }
 
@@ -432,11 +427,18 @@ intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakeP
   }
 
   public void intakeAuto() {
-    
-    if (intake.getIntakeCurrent() >= 22) {
-      deployIntake = false;
-    }
+    intakeAction(deployIntake);
+    if (intake.getIntakeCurrent() >= 28) {
       
+      deployIntake = false;
+
+      // wrist.moveWrist(0);
+
+    }
+    
+    //   else {
+    //     deployIntake = true;
+    //   }
   }
 
    // This is the shoot method which can be fed a bool at all times

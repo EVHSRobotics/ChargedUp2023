@@ -52,7 +52,16 @@ public class Intake extends SubsystemBase {
   // public ColorSensorV3 intakeColorSensor;
   private ColorMatch intakeColorMatch;
  
+  public IntakeType cIntakeType = IntakeType.LOW;
 
+  // Different intake types
+  // High - Human Player Station
+  // Low - When you lower the intake right on the game element
+  // Ground - You can intake the cone when it is flipped
+  public enum IntakeType {
+    LOW, HIGH, GROUND;
+  }
+  
   /** Creates a new Intake. */
   public Intake() {
 

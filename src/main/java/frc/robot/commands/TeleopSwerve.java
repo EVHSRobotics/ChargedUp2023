@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
 public class TeleopSwerve extends CommandBase {    
-    private Swerve s_Swerve;    
+    public Swerve s_Swerve;    
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
@@ -34,9 +34,10 @@ public class TeleopSwerve extends CommandBase {
     private GenericEntry rotationalSpeedEntry;
     private GenericEntry autoAlignRampEntry;
     private final double degtolerance = 2;
-    private PIDController yawController = new PIDController(0.006, 0.00, 0.00);
+    private PIDController yawController = new PIDController(0.009, 0.00, 0.00);
 
     private double compassOffset;
+    public boolean fieldRelative = true;
 
     public double driverMatchTime = 0.0;
 
@@ -60,6 +61,7 @@ public class TeleopSwerve extends CommandBase {
         yawController.setIntegratorRange(20);
         yawController.setBound(1);
 
+        fieldRelative = true;
     }
 
     @Override
@@ -72,39 +74,63 @@ public class TeleopSwerve extends CommandBase {
         driverMatchTime = DriverStation.getMatchTime();
 
         driveSpeedEntry.setDouble(driverMatchTime);
+        SmartDashboard.putNumber("yaw", s_Swerve.gyro.getYaw());
+        SmartDashboard.updateValues();
 
         /* Drive */
 
         // Turn left
-        if(swerveController.getLeftBumper() ){
-            if(convertCompass(gyroYaw360()) > 180){
-                rotationVal = yawController.calculate((180-convertCompass(gyroYaw360())));
-            }
-            if(convertCompass(gyroYaw360()) < 180){
-                rotationVal = yawController.calculate((180-convertCompass(gyroYaw360())));
-            }
-        }
+        // if(swerveController.getLeftBumper() ){
+        //     if(convertCompass(gyroYaw360()) > 180){
+        //         rotationVal = yawController.calculate((180-convertCompass(gyroYaw360())));
+        //     }
+        //     if(convertCompass(gyroYaw360()) < 180){
+        //         rotationVal = yawController.calculate((180-convertCompass(gyroYaw360())));
+        //     }
+        //     fieldRelative = true;
+
+        // }
+
+        // if(swerveController.getRightBumper()){
+        //     if(convertCompass(gyroYaw360()) > 180){
+        //         rotationVal = -yawController.calculate((convertCompass(gyroYaw360()) - 360));
+        //     }
+        //     if(convertCompass(gyroYaw360()) < 180){
+        //         rotationVal = -yawController.calculate((convertCompass(gyroYaw360())));
+        //     }
+        //     fieldRelative = true;
+
+        // }
+
+        // if(swerveController.getRightTriggerAxis() > 0.2){
+        //     rotationVal = yawController.calculate(convertCompass(gyroYaw360()));
+        //     fieldRelative = true;
+
+        // }
+        // else if(swerveController.getLeftTriggerAxis() > 0.2){
+        //     rotationVal = -yawController.calculate(convertCompass(gyroYaw360()));
+        //     fieldRelative = true;
+        // }
 
         if(swerveController.getRightBumper()){
-            if(convertCompass(gyroYaw360()) > 180){
-                rotationVal = -yawController.calculate((convertCompass(gyroYaw360()) - 360));
-            }
-            if(convertCompass(gyroYaw360()) < 180){
-                rotationVal = -yawController.calculate((convertCompass(gyroYaw360())));
-            }
+            fieldRelative = !fieldRelative;
         }
+
+
 
         SmartDashboard.putNumber("Compass heading", s_Swerve.gyro.getYaw() + 180);
         SmartDashboard.putNumber("Compass heading converted", convertCompass(gyroYaw360()));
         SmartDashboard.updateValues();  
-    
+        // if (!swerveController.getAButtonPressed()) {
+        
         s_Swerve.drive(
-                new Translation2d(-translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
+                new Translation2d(translationVal, -strafeVal).times(Constants.Swerve.maxSpeed), 
                 rotationVal * Constants.Swerve.maxAngularVelocity, 
-                false, 
+                fieldRelative, 
                 true
             );
         
+    // }
             driveSpeedEntry.setDouble(translationVal*Constants.Swerve.maxSpeed);
             rotationalSpeedEntry.setDouble(rotationVal*Constants.Swerve.maxAngularVelocity);
 

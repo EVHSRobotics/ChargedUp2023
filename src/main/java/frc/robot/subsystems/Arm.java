@@ -77,7 +77,7 @@ public enum SparkLEDColors {
 
     // DOWN(242.209), MIDDLE(220.32), STRAIGHT(177.348), HIGHINTAKE(177.229);
     
-    DOWN(-2.5), MIDDLE(-25), STRAIGHT(-80), HIGHINTAKE(-70);
+    DOWN(-2.5), MIDDLE(-23), STRAIGHT(-80), HIGHINTAKE(-70);
     
      
      private double tArmSensorPosition;
