@@ -112,9 +112,9 @@ public class TeleopSwerve extends CommandBase {
         //     fieldRelative = true;
         // }
 
-        if(swerveController.getRightBumper()){
-            fieldRelative = !fieldRelative;
-        }
+        // if(swerveController.getRightBumper()){
+        //     fieldRelative = !fieldRelative;
+        // }
 
 
 

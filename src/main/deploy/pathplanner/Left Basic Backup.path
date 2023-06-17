@@ -53,11 +53,11 @@
     },
     {
       "anchorPoint": {
-        "x": 3.714008453657933,
+        "x": 7.265369744414703,
         "y": 3.288720423594694
       },
       "prevControl": {
-        "x": 3.4350580596653293,
+        "x": 6.986419350422099,
         "y": 3.288720423594694
       },
       "nextControl": null,
@@ -67,7 +67,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Auto Align Ramp"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0

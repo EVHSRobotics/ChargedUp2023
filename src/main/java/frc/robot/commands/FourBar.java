@@ -134,16 +134,21 @@ this.vision = vision;
         arm.setLED(SparkLEDColors.SHOOT);
 
       }
-      if (wPositionScoring == WristPosition.UP && tPositionScoring == TopArmPosition.DOWN) {
+      // Low shooting
+      if (wPositionScoring == WristPosition.MIDDLE && tPositionScoring == TopArmPosition.DOWN) {
         if (System.currentTimeMillis() - shootArmTime >= 700) {
           intake.gameObject = GameObject.UNKNOWN;
 
           deployShoot = false;
 
         }
-        else {
+        else if (System.currentTimeMillis() - shootArmTime >= 300) {
+
           intake.runIntake(intake.gameObject == GameObject.CUBE ? outtakePower : -outtakePower);
 
+        }
+        else {
+wrist.setWristPosition(WristPosition.MIDDLE);
         } 
       }
       else {
@@ -319,6 +324,7 @@ intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakeP
    
 
       tPositionScoring = TopArmPosition.STRAIGHT;
+      
       // bPositionScoring = BottomArmPosition.IN;
       if (intake.gameObject == GameObject.CUBE) {
 
@@ -348,7 +354,7 @@ intake.runIntake(intake.gameObject == GameObject.CUBE ? -outtakePower : outtakeP
       outtakePower = 0.7;
       tPositionScoring = TopArmPosition.DOWN;
       // bPositionScoring = BottomArmPosition.IN;
-      wPositionScoring = WristPosition.UP;
+      wPositionScoring = WristPosition.MIDDLE;
         
       deployShoot = true;
     }

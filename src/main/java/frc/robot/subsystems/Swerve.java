@@ -39,8 +39,8 @@ public class Swerve extends SubsystemBase {
         // resetting gyro
 
     //    zeroGyro();
-// gyro.reset();
-compassOffset = gyro.getYaw() + 180;
+gyro.reset();
+// compassOffset = gyro.getYaw() + 180;
         
         // creating each of the swerve modules
         mSwerveMods = new SwerveModule[] {
@@ -82,7 +82,7 @@ compassOffset = gyro.getYaw() + 180;
     }    
 
     /* Used by SwerveControllerCommand in Auto */
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
+    public void     setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){
@@ -125,14 +125,15 @@ compassOffset = gyro.getYaw() + 180;
     // }
 
     public Rotation2d getYaw1() {
-        SmartDashboard.putNumber("gyrovalueyooh", convertCompass(gyroYaw360()));
+        SmartDashboard.putNumber("gyrovalueyooh", gyroYaw360());
         SmartDashboard.updateValues();
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(convertCompass(360 - gyroYaw360())) : Rotation2d.fromDegrees(convertCompass(gyroYaw360()));
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyroYaw360()) : Rotation2d.fromDegrees(gyroYaw360());
     }
 
     public Rotation2d getYaw() {
-        SmartDashboard.putNumber("gyrovalueyooh", convertCompass(gyroYaw360()));
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(convertCompass(360 - gyroYaw360())-180) : Rotation2d.fromDegrees(convertCompass(gyroYaw360())-180);
+        double degrees = gyro.getRotation2d().getDegrees();
+        degrees = -degrees;
+        return Rotation2d.fromDegrees(degrees);
     }
 
     public void resetModulesToAbsolute(){
@@ -145,13 +146,13 @@ compassOffset = gyro.getYaw() + 180;
         return gyro.getYaw() + 180;
     }
 
-    public double convertCompass(double heading){
-        if(heading >= compassOffset){
-            return heading - compassOffset;
-        } else {
-            return (360 - compassOffset) + heading;
-        }
-    }
+    // public double convertCompass(double heading){
+    //     if(heading >= compassOffset){
+    //         return heading - compassOffset;
+    //     } else {
+    //         return (360 - compassOffset) + heading;
+    //     }
+    // }
 
 
 

@@ -237,18 +237,21 @@ public enum SparkLEDColors {
         tErrorSum += dt * tError;
         //00000001
     }
-    double output = -MathUtil.clamp(tError*0.063   + errorrate *0.001+tErrorSum*0.0, -1, 1);
+    double output = -MathUtil.clamp(tError*0.056   + errorrate *0.0+tErrorSum*0.0, -1, 1);
     SmartDashboard.putNumber("TARGET TOP VALUE", Arm.convertArmEncoder(tPosition.tArmSensorPosition));
-    SmartDashboard.putNumber("Top PID Output", ( output));
+    SmartDashboard.putNumber("Top PID Output", ( tError));
     SmartDashboard.updateValues();
     lastTimestamp = Timer.getFPGATimestamp();
     tLastError = tError;
     tLastPos = getTopArmPosition();
 
 
-    
+    // if(Math.abs(tError) > 3.5){    
     topArm.set(ControlMode.PercentOutput, MathUtil.applyDeadband(output, 0.05));
-
+    // }
+    // else {
+    //   topArm.set(ControlMode.PercentOutput, 0);
+    // }
 
     // We can know how much the output is off by in caller
     return MathUtil.applyDeadband(output, 0.05);

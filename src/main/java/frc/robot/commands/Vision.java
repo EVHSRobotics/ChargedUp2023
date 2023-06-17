@@ -74,7 +74,7 @@ this.intake = intake;
 
     
     }
-    if (xboxController.getXButton()) {
+    if (xboxController.getBButton()) {
       aimLimelightGameObjectPickup(gameObjectTopLimelight, gameObjectTopLimelight.getGameObject(), true);
     }
 

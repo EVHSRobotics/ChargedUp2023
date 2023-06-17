@@ -133,7 +133,7 @@ public class RobotContainer {
     }
 
     public Command[] getTeleCommand() {
-        Command[] ret = {s_Swerve, fourBar, vision};
+        Command[] ret = {s_Swerve, vision, fourBar};
         return ret;
     }
     /**
@@ -156,7 +156,7 @@ public class RobotContainer {
         s_Swerve.fieldRelative = true;
         // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
     // for every path in the group
-    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(autoChooser.getSelected(), new PathConstraints(2, 1.5));
+    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(autoChooser.getSelected(), new PathConstraints(2.5, 2));
     // swerve.gyro.reset();
     // This is just an example event map. It would be better to have a constant, global event map
     // in your code that will be used by all path following commands.
@@ -166,13 +166,30 @@ public class RobotContainer {
     eventMap.put("Outtake Mid", new SwerveCommand(PathCommandAction.OUTTAKEMID, fourBar, vision, s_Swerve));
     eventMap.put("Intake", new SwerveCommand(PathCommandAction.INTAKE, fourBar, vision, s_Swerve));
     eventMap.put("AlignCube", new SwerveCommand(PathCommandAction.ALIGNCUBE, fourBar, vision, s_Swerve));
-    eventMap.put("AlignCube", new SwerveCommand(PathCommandAction.ALIGNCUBE, fourBar, vision, s_Swerve));
     // eventMap.put("Outake Cube 1", new SwerveCommand(PathCommandAction.OUTTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Outake Cone 1", new SwerveCommand(PathCommandAction.OUTTAKECONE, fourBar, vision, teleopSwerve));
     // eventMap.put("Intake Cube 2", new SwerveCommand(PathCommandAction.INTAKECUBE, fourBar, vision, teleopSwerve));
     // eventMap.put("Intake Cone 1", new SwerveCommand(PathCommandAction.INTAKECONE, fourBar, vision, teleopSwerve));
     // eventMap.put("marker1", new PrintCommand("Passed marker 1"));
     // eventMap.put("intakeDown", new IntakeDown());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
  
     // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
     SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
